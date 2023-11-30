@@ -232,7 +232,7 @@ int welsh_powell(Graphe * graphe) {
     //du graphe donc on les recupere apres
 }
 //algorithme d'affichage des uniter d'apres les couleures des sommets
-int affichage_exclusion(Graphe * graphe, int nb_couleur){
+int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
     //tableau ou on stske les differentes couleur
     char couleur[nb_couleur-1];
     int rempli = 0;
@@ -284,6 +284,52 @@ int affichage_exclusion(Graphe * graphe, int nb_couleur){
 //fonction rassemblant tout pour simplifier sont utilisation dans le menu
 //on peut conciderer ca somme le main exclusion
 int exclusion_main(){
+    char *nomfichier = NULL;
+    int ** valeur = NULL ;
+    int nb_lignes;
+    int gr_sommet;
+    int nb_couleur;
+    int ordre;
+    Graphe *graphe_exclu;
+    size_t tailleMax = 100;  // Taille maximale du nom de fichier
 
+    // Allocation dynamique pour le nom de fichier
+    nomfichier = (char *)malloc(tailleMax * sizeof(char));
+    if (nomfichier == NULL) {
+        fprintf(stderr, "Erreur d'allocation mémoire.\n");
+        return 1;
+    }
+//on recupere le nom du fichier
+    printf("Entrez le nom du fichier d'exclusion : \n");
+    scanf("%99s", nomfichier);
+    fflush(stdin);
+
+//on recupere le nombre de lignes et les valeur du fichier
+    nb_lignes = lecture_fichier_exclusion(nomfichier,&valeur);
+    /*//test affichage
+    printf(" il y a %d ligne dans le fichier texte \n",nb_lignes);
+    for (int i = 0; i < nb_lignes; i++) {
+            printf(" ligne %d %d %d \n",i+1,valeur[i][0],valeur[i][1]);
+    }*/
+
+    // on compte le nombre de valeur differentes dans le tableau valeur
+    //ca nous donne le nombre de sommet differents pour le graphe
+    ordre = different_sommet(valeur,nb_lignes);
+    //on recupere également la valeur du plus grand sommet
+    gr_sommet = grand_sommet(valeur,nb_lignes);
+    //affichage teste
+    // printf("%d\n\n",gr_sommet);
+
+    //le tableau alouer dynamiquement valeur est donc maintenant remplie des valeur des fichier texte.
+    //il faut maintenant modeliser le graph d'exclusion a sovoir chaque couple représente une arrete non orienter
+
+    graphe_exclu = nouv_graphe(gr_sommet,nb_lignes,valeur);
+    afficher_graph_exclusion(graphe_exclu,gr_sommet);
+
+    nb_couleur = welsh_powell(graphe_exclu);
+
+    affichage_station_exclusion(graphe_exclu,nb_couleur);
+
+    system("pause");
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H

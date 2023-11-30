@@ -48,7 +48,7 @@ pSommet* CreerArete(pSommet* sommet,int s1,int s2);
 // affichage des successeurs du sommet num
 void afficher_successeurs(pSommet * sommet, int num);
 //affichage du graphe avec les successeurs de chaque sommet
-void afficher_exclusion(Graphe* graphe,int grand_sommet);
+void afficher_graph_exclusion(Graphe* graphe,int grand_sommet);
 
 /////////////////////////Les fonciton de bases ////////////////////////
 
@@ -136,7 +136,7 @@ Graphe * nouv_graphe(int ordre,int taille ,int **valeur ) {
     return graphe;
 }
 //affichage du graphe avec les successeurs de chaque sommet
-void afficher_exclusion(Graphe* graphe,int grand_sommet)
+void afficher_graph_exclusion(Graphe* graphe,int grand_sommet)
 {
     printf("graphe\n");
 
