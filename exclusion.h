@@ -10,7 +10,7 @@
 #ifndef OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H
 #define OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H
 ///faire une fonction qui pourrait faire la lecture en fonction de ce qu'on demande///
-
+//lecture du fichier et récuperation des differentes valeur
 int lecture_fichier_exclusion( char *nomfichier,int ***valeur){
     char ligne[100];  // Tableau pour stocker une ligne du fichier
     int tableau[2];   // Tableau pour stocker les deux nombres de chaque ligne
@@ -70,7 +70,7 @@ int lecture_fichier_exclusion( char *nomfichier,int ***valeur){
     //le programme compte toute les lignes meme les lignes vide !!!!!!!!!
 
 }
-
+//lecture dan les valeur récupere pour avoir le nombre de differents sommet
 int different_sommet(int **valeur, int lignes) {
     int compte = 0;
 //on compte ne nombre de valeur differentes sur la premiere ligne
@@ -103,7 +103,7 @@ int different_sommet(int **valeur, int lignes) {
     //possiblement une amelioration, avec une grand boucle for en fonction du nombre de lignes, ici on le fait 2
     // fois mais on pourrati le faire N fois
 }
-
+//lecture dans les valeur pour avoie le plus grand sommet
 int grand_sommet(int ** valeur, int lignes ){
 
     int grand_sommet = 0;
@@ -118,7 +118,7 @@ int grand_sommet(int ** valeur, int lignes ){
     return grand_sommet;
 
 }
-
+//algorithme de welsh powell pour colorer le graphh d'exclusion
 int welsh_powell(Graphe * graphe) {
 
 //pour chaque sommet regarder combien d'arc il a adjacents
@@ -231,11 +231,30 @@ int welsh_powell(Graphe * graphe) {
     //a la fin on retourn le nombre de couleur differents, mais les couleur elle sont stocker dans les structures
     //du graphe donc on les recupere apres
 }
-
+//algorithme d'affichage des uniter d'apres les couleures des sommets
 int affichage_exclusion(Graphe * graphe, int nb_couleur){
+    //tableau ou on stske les differentes couleur
+    char couleur[nb_couleur-1];
+    int rempli = 0;
 
     //on commence par recupere les differentes couleur dans le graphe
+    for (int i = 0; i < graphe->ordre; i++) {
+        char valeur_actu = graphe->pSommet[i]->couleur;
+        int different = 1  ;
 
+        //on verifie que l'on a pas deja enregistrer la couleur
+        for (int j = 0; j < graphe->ordre; j++) {
+            if (couleur[j] == valeur_actu) {
+                different = 0;
+                break;
+            }
+        }
+
+        if(different){
+            couleur[rempli] = valeur_actu;
+            rempli++;
+        }
+    }
 
     printf("pour la contrainte d'exclusion : \n");
     printf(" nous avons trouver %d station differents \n\n", nb_couleur);
@@ -244,17 +263,27 @@ int affichage_exclusion(Graphe * graphe, int nb_couleur){
 
     //on regarde les sommet 1 a 1, tout ceux qui ont la meme couleur seront afficher
     //dans la meme uniter
-    for (int i = 0; i < graphe->ordre; i++) {
+    for ( int i = 0; i < graphe->ordre; i++) {
         //on note les sommet sans contrainte
         printf(" les sommet suivant n'ont pas de contraint d'exclusion :\n ");
         if(graphe->pSommet[i]->couleur == 'n'){
             printf(" sommet %d\n",i);
+    }}
+    //on note les sommet en fonction de leur differentes couleurs
+    for (int j = 0; j < nb_couleur-1; j++) {
+        printf(" voici l'uniter %c, elle est consituer des sommet :\n",couleur[j]);
+        //on percour le tableau et print les sommet ayant la meme couleur
+        for (int k = 0; k < graphe->ordre; k++) {
+            if(graphe->pSommet[k]->couleur == couleur[j]){
+                printf(" sommet %d \n",k);
+            }
         }
-        //on note les sommet en fonction de leur differentes couleurs
 
     }
-
-    //faire un affichage en fonction des couleur, chaque couleur = une station
+}
+//fonction rassemblant tout pour simplifier sont utilisation dans le menu
+//on peut conciderer ca somme le main exclusion
+int exclusion_main(){
 
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H

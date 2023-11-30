@@ -25,6 +25,8 @@ int main() {
     switch(choix){
         case 1 :
             printf("vous avez choisi l'exclusion \n");
+
+            exclusion_main();
             break;
 
         case 2 :
