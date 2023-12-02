@@ -2,9 +2,6 @@
 #include "exclusion.h"
 
 int main() {
-    printf("Hello, World!\n");
-    system("pause");
-
     system("cls");
 
     int choix = 10 ;

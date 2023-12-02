@@ -124,10 +124,10 @@ int welsh_powell(Graphe * graphe) {
 //pour chaque sommet regarder combien d'arc il a adjacents
     int count;
     int temp;
-    int degre[graphe->ordre][2];
+    int degre[graphe->ordre+1][2];
 
     //on compte le degres des sommet qu'on stocke dans un tableau
-    for (int i = 0; i < graphe->ordre; i++) {
+    for (int i = 0; i < graphe->ordre+1; i++) {
         count = 0;
         pArc arc = graphe->pSommet[i]->arc;
         while (arc != NULL) {
@@ -139,9 +139,10 @@ int welsh_powell(Graphe * graphe) {
         //degrer 1 = le degrer des sommet
         degre[i][1] = count;
     }
+    printf("comptage des sommet\n");
     //trier les sommet par ordre decroissant en fonction de leur degrer
-    for (int i = 0; i < graphe->ordre - 1; i++) {
-        for (int j = 0; j < graphe->ordre - i - 1; j++) {
+    for (int i = 0; i < graphe->ordre ; i++) {
+        for (int j = 0; j < graphe->ordre - i ; j++) {
             // Compare les éléments de la première colonne
             if (degre[j][1] < degre[j + 1][1]) {
                 // Échange les lignes complètes
@@ -153,53 +154,61 @@ int welsh_powell(Graphe * graphe) {
             }
         }
     }
-
+    printf("triage des sommet dans le tableau \n");
     //affichage test du tableau contenant les degrer avec leur sommet
-    for (int i = 0; i < graphe->ordre; i++) {
-        printf("(%d, %d)\n\n ", degre[i][0], degre[i][1]);
+    printf(" ______Affichage test du tableau_____\n");
+    for (int i = 0; i < graphe->ordre+1; i++) {
+        printf("(%d, %d)\n ", degre[i][0], degre[i][1]);
     }
 
     //attribuer les couleur en partant du debut du tableau et on donne dabord une couleur puis autre
     //on regarde la couleur du sommet si il est deja colorer ou pas
-    int colorer[graphe->ordre];
-    int adj_colorer[graphe->ordre];
+    int colorer[graphe->ordre+1];
+    int adj_colorer[graphe->ordre+1];
     char couleur = 'c';
+    //nb_couleur a 1 car on colore les sommet isoler en dehors de la boucle
     int nb_couleur = 1;
     int restant = 1;
 
-    //initialisation des tableau a 0 pour pas avoir de valeur etrange
-    //on considere que chaque sommet esst colorable avant de le tester
-    for (int i = 0; i < graphe->ordre; i++) {
-        colorer[i] = 0;
-        adj_colorer[i] = 0;
-    }
-
     //on commence par colorer les sommet qui n'ont pas d'adjacent d'une couleur particuliere
     //la couleur des sommet qui sont isoler est le noir dans tout le graphe
-    for (int j = 0; j < graphe->ordre; j++){
+    for (int j = 0; j < graphe->ordre+1; j++){
         if (degre[j][1] == 0) {
-            graphe->pSommet[degre[j][1]]->couleur = 'n';
+            graphe->pSommet[degre[j][0]]->couleur = 'n';
         }}
+    printf(" on colore tout les sommet qui sont isoler\n");
+
 
 
 //tant que tout les sommet ne sont pas colorer alors on refait la boucle avec un autre couleur
     while (restant != 0) {
+        //initialisation des tableau a 0 pour pas avoir de valeur etrange
+        //on considere que chaque sommet est colorable avant de le tester,
+        //on reffait le test a chaque boucle
+        for (int  i = 0; i < graphe->ordre+1; i++) {
+            colorer[i] = 0;
+            adj_colorer[i] = 0;
+        }
+        printf(" initialisation des tableau colorer et adj_colorer\n");
+
         //on augmente de un le nombre  couleur a chaque itération de la boucle
         nb_couleur++;
+        printf("la couleur %c est la %d couleur \n",couleur, nb_couleur);
 
-        //pour tout le tableau
-        for (int i = 0; i < graphe->ordre; i++) {
+//pour chaque couleur on regarde dans tout le tableau et on remplir les couleurs
+//dans les sommet qui remplissent les conditions
+        for(int i = 0; i< graphe->ordre+1; i++) {
 
-            //on check si le sommet est deja marquer
+            //on check si le sommet est deja colorer
             if (graphe->pSommet[degre[i][0]]->couleur != 'b') {
                 colorer[i] = 1;
             }
 
             //on chek les adjacents du sommet
-            pArc arc = graphe->pSommet[i]->arc;
+            pArc arc = graphe->pSommet[degre[i][0]]->arc;
             while (arc != NULL) {
-                //si le sommmet a un adjacent deja colorer
-                if (graphe->pSommet[arc->sommet]->couleur != 'b') {
+                //si le sommmet a un adjacent deja colorer de la couleur actuel
+                if (graphe->pSommet[arc->sommet]->couleur == couleur) {
                     adj_colorer[i] = 1;
                 }
                 arc = arc->arc_suivant;
@@ -209,22 +218,25 @@ int welsh_powell(Graphe * graphe) {
             //si le sommet n'est pas colorer et qu'il n'a pas d'adjacents colorer
             //alors on le colore
             if (colorer[i] == 0 & adj_colorer[i] == 0) {
+                printf("le sommet %d est maintenant colorer en %c\n", degre[i][0], couleur);
                 graphe->pSommet[degre[i][0]]->couleur = couleur;
             }
-
-            //////fin de la boucle on aplique les couleur /////
+        }
+            //////fin de la boucle on change les couleur /////
             //on change de couleur
+            printf(" couleur %c devient ",couleur);
             couleur++;
+            printf(" %c \n",couleur);
             //on dit qu'il ne reste plus de sommet a colorer( en sachant que cette condition est verifier apres
             //comme ca tant qu'il reste des sommet non colorer cette valeur ne va pas s'apliquer
             restant = 0;
             //on regarde si il reste des sommet pas colorer
-            for ( i = 0; i < graphe->ordre; i++) {
-                if (graphe->pSommet[degre[i][0]]->couleur == 'b') {
+            for ( int h  = 0; h < graphe->ordre+1; h++) {
+                if (graphe->pSommet[degre[h][0]]->couleur == 'b') {
                     restant = 1;
                 }
             }
-        }
+
 
     }
     return nb_couleur;
@@ -234,16 +246,16 @@ int welsh_powell(Graphe * graphe) {
 //algorithme d'affichage des uniter d'apres les couleures des sommets
 int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
     //tableau ou on stske les differentes couleur
-    char couleur[nb_couleur-1];
+    char couleur[nb_couleur];
     int rempli = 0;
 
     //on commence par recupere les differentes couleur dans le graphe
-    for (int i = 0; i < graphe->ordre; i++) {
+    for (int i = 0; i < graphe->ordre+1; i++) {
         char valeur_actu = graphe->pSommet[i]->couleur;
         int different = 1  ;
 
         //on verifie que l'on a pas deja enregistrer la couleur
-        for (int j = 0; j < graphe->ordre; j++) {
+        for (int j = 0; j < nb_couleur; j++) {
             if (couleur[j] == valeur_actu) {
                 different = 0;
                 break;
@@ -257,28 +269,29 @@ int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
     }
 
     printf("pour la contrainte d'exclusion : \n");
-    printf(" nous avons trouver %d station differents \n\n", nb_couleur);
-
-    printf(" les station sont les suivantes :\n");
+    printf(" nous avons trouver %d station differents \n\n", nb_couleur-1);
 
     //on regarde les sommet 1 a 1, tout ceux qui ont la meme couleur seront afficher
     //dans la meme uniter
+    printf(" les sommet suivant n'ont pas de contraint d'exclusion :\n ");
     for ( int i = 0; i < graphe->ordre; i++) {
         //on note les sommet sans contrainte
-        printf(" les sommet suivant n'ont pas de contraint d'exclusion :\n ");
         if(graphe->pSommet[i]->couleur == 'n'){
             printf(" sommet %d\n",i);
     }}
+
+    printf(" les station sont les suivantes :\n");
     //on note les sommet en fonction de leur differentes couleurs
-    for (int j = 0; j < nb_couleur-1; j++) {
-        printf(" voici l'uniter %c, elle est consituer des sommet :\n",couleur[j]);
-        //on percour le tableau et print les sommet ayant la meme couleur
-        for (int k = 0; k < graphe->ordre; k++) {
-            if(graphe->pSommet[k]->couleur == couleur[j]){
-                printf(" sommet %d \n",k);
+    for (int j = 0; j < nb_couleur; j++) {
+        if( couleur[j]!= 'n') {
+            printf(" voici l'uniter %c, elle est consituer des sommet :\n", couleur[j]);
+            //on percour le tableau et print les sommet ayant la meme couleur
+            for (int k = 0; k < graphe->ordre; k++) {
+                if (graphe->pSommet[k]->couleur == couleur[j]) {
+                    printf(" sommet %d \n", k);
+                }
             }
         }
-
     }
 }
 //fonction rassemblant tout pour simplifier sont utilisation dans le menu
@@ -290,7 +303,7 @@ int exclusion_main(){
     int gr_sommet;
     int nb_couleur;
     int ordre;
-    Graphe *graphe_exclu;
+    Graphe * graphe_exclu;
     size_t tailleMax = 100;  // Taille maximale du nom de fichier
 
     // Allocation dynamique pour le nom de fichier
@@ -305,6 +318,7 @@ int exclusion_main(){
     fflush(stdin);
 
 //on recupere le nombre de lignes et les valeur du fichier
+//cad on recupere le nombre de case du tableau valeur
     nb_lignes = lecture_fichier_exclusion(nomfichier,&valeur);
     /*//test affichage
     printf(" il y a %d ligne dans le fichier texte \n",nb_lignes);
@@ -312,22 +326,26 @@ int exclusion_main(){
             printf(" ligne %d %d %d \n",i+1,valeur[i][0],valeur[i][1]);
     }*/
 
-    // on compte le nombre de valeur differentes dans le tableau valeur
-    //ca nous donne le nombre de sommet differents pour le graphe
+// on compte le nombre de valeur differentes dans le tableau valeur
     ordre = different_sommet(valeur,nb_lignes);
-    //on recupere également la valeur du plus grand sommet
+//on recupere également la valeur du plus grand sommet
+//ca nous donne le nombre de sommet differents pour le graphe
     gr_sommet = grand_sommet(valeur,nb_lignes);
-    //affichage teste
-    // printf("%d\n\n",gr_sommet);
+
 
     //le tableau alouer dynamiquement valeur est donc maintenant remplie des valeur des fichier texte.
     //il faut maintenant modeliser le graph d'exclusion a sovoir chaque couple représente une arrete non orienter
 
+    printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
     graphe_exclu = nouv_graphe(gr_sommet,nb_lignes,valeur);
     afficher_graph_exclusion(graphe_exclu,gr_sommet);
 
+    //on effectue l'algorithme de welsh powell, on attribut differentes couleur aux differents sommet;
+    printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
     nb_couleur = welsh_powell(graphe_exclu);
+    printf("_______________l'algorithme de welsh powell est terminer_______________\n");
 
+    //on affiche les station en fonction des couleurs
     affichage_station_exclusion(graphe_exclu,nb_couleur);
 
     system("pause");

@@ -147,7 +147,7 @@ void afficher_graph_exclusion(Graphe* graphe,int grand_sommet)
     printf("listes d'adjacence :\n");
 ///ici on met soit le plus grand sommet et donc on affiche 30 sommet ou on met l'ordre et on affiche seulemetn le nombre
 ///de sommet differents soit un peut moins ou beaucoup moins en fonction des graphs
-    for (int i=0; i < grand_sommet; i++)
+    for (int i=0; i <= grand_sommet; i++)
     {
         afficher_successeurs(graphe->pSommet, i);
         printf("\n");
