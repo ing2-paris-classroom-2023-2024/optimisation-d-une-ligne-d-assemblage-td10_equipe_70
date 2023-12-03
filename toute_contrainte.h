@@ -21,16 +21,16 @@ int trouverSource(Graphe* graphe,float ** valeur) {
         existe[i] = 0;
         printf(" %d %d ",degreEntrant[i],existe[i] );
     }
-    printf(" \nles deux tableau sont initialiser \n");
+    //printf(" \nles deux tableau sont initialiser \n");
 
     // Calculer les degrés entrants pour chaque sommet
     for (int i = 0; i <= graphe->ordre; i++) {
         int degrer = 0;
-         printf(" sommet %d on selectionne les predecesseur %d\n",i,degrer);
+         //printf(" sommet %d on selectionne les predecesseur %d\n",i,degrer);
          
          pArc arc_temp = graphe->pSommet[i]->arc_entrant;
 
-         printf("justea avant la boucle \n");
+         //printf("justea avant la boucle \n");
         while (arc_temp != NULL) {
             degrer++;
             arc_temp = arc_temp->arc_suivant;
@@ -132,18 +132,18 @@ int grand_sommet_temps(float ** valeur, int lignes ){
 
 }
 //pour trouver la valeur max des predecesseur
-int trouverValeurMaxPredecesseurs(pSommet* sommet,int i) {
+float trouverValeurMaxPredecesseurs(Graphe * graphe,int i) {
 
-    //on prend le numero de sommet du predecesseur
-    int val = sommet[i]->arc_entrant->sommet;
+    //on prend le numero de sommet du PREMIER predecesseur
+    int val = graphe->pSommet[i]->arc_entrant->sommet;
     // Initialiser la valeur maximale avec la première valeur de prédécesseur
-    int valeurMax = sommet[val]->valeur;
+    float valeurMax = graphe->pSommet[val]->valeur;
 
-    // Parcourir la liste des prédécesseurs et mettre à jour la valeur maximale si nécessaire
-    pArc predecesseur = sommet[i]->arc_entrant;
+    // Parcourir la liste des prédécesseurs et mise à jour la valeur maximale si nécessaire
+    pArc predecesseur = graphe->pSommet[i]->arc_entrant;
     while (predecesseur != NULL) {
-        if (sommet[predecesseur->sommet]->valeur > valeurMax) {
-            valeurMax = sommet[predecesseur->sommet]->valeur;
+        if (graphe->pSommet[predecesseur->sommet]->valeur > valeurMax) {
+            valeurMax = graphe->pSommet[predecesseur->sommet]->valeur;
         }
         predecesseur = predecesseur->arc_suivant;
     }
@@ -151,7 +151,7 @@ int trouverValeurMaxPredecesseurs(pSommet* sommet,int i) {
 }
 
 // Algorithme de parcours en largeur (BFS)
-void BFS(Graphe* graphe, int depart) {
+void BFS(Graphe* graphe, int depart,int ** temps) {
 
 
     // Créer une file pour le BFS
@@ -161,29 +161,35 @@ void BFS(Graphe* graphe, int depart) {
     graphe->pSommet[depart]->marque = 1;
     enfiler(file, depart);
 
-    while (!estVide(file)) {
+    printf(" ordre de decouverte des sommet = \n\n");
+    // tant que la file n'est pas vide
+    while (file->taille != 0) {
         // Défiler un sommet de la file et l'afficher
         int sommetCourant = defiler(file);
-        int val ;
-        printf("%d ", sommetCourant);
+        float val ;
+        printf(" %d ", sommetCourant);
 
+        val = trouverValeurMaxPredecesseurs(graphe,sommetCourant);
+        graphe->pSommet[sommetCourant]->valeur = temps[sommetCourant][1] + val;
         // Parcourir tous les successeurs du sommet actuel
-        pArc successeur = graphe->pSommet[sommetCourant]->arc_sortant;
-        while (successeur != NULL) {
-            // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
-            if (graphe->pSommet[successeur->sommet]->marque == 0) {
-                graphe->pSommet[successeur->sommet]->marque = 1;
-                enfiler(file, successeur->sommet);
-                //le sommet est maintenant enfiler et visiter, avant de passer au suivant
-                // Ajouter la valeur du prédécesseur à la valeur du successeur pour tout les succeseur de sommet courant
-                //val = valeur max des predecesseurs
-                 val = trouverValeurMaxPredecesseurs(graphe->pSommet,successeur->sommet);
-                 //on ajoute cette valeur en tant que la valeur du succeseur
-                 graphe->pSommet[successeur->sommet]->valeur += val;
+        pArc arc_temp = graphe->pSommet[sommetCourant]->arc_sortant;
+        printf(" on regarde les succeseur de %d\n",sommetCourant);
 
+        while (arc_temp != NULL) {
+            printf(" dans la boucle de succeseur");
+            // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
+            if (graphe->pSommet[arc_temp->sommet]->marque == 0) {
+                printf(" le succeseur %d n'est pas encore decouvert ", arc_temp->sommet);
+                graphe->pSommet[arc_temp->sommet]->marque = 1;
+                enfiler(file, arc_temp->sommet);
+                printf(" le succeseur %d est enfiler\n", arc_temp->sommet);
+                //le sommet est maintenant enfiler et visiter, avant de passer au suivant
                 }
+
+            printf("on va passer au suivant ");
             //on passe au succeseur suivant
-            successeur = successeur->arc_suivant;
+            arc_temp = arc_temp->arc_suivant;
+            printf(" on passe au successeur %d ", arc_temp->sommet);
         }
 
     // Libérer la mémoire allouée

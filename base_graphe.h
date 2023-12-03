@@ -28,7 +28,7 @@ struct Sommet
 {
     struct Arc* arc_sortant; //liste des arcs adjacents
     struct Arc* arc_entrant;
-    int valeur;
+    float valeur;
     char couleur;
     int marque ;
 
@@ -69,7 +69,7 @@ File* creerFile(int capacite);
 // Fonction pour vérifier si la file est vide
 int estVide(File* file);
 // Fonction pour ajouter un élément à la file
-void enfiler(File* file, int element);
+int enfiler(File* file, int element);
 // Fonction pour retirer un élément de la file
 int defiler(File* file);
 // Fonction pour libérer la mémoire de la file
@@ -83,8 +83,8 @@ File* creerFile(int capacite) {
     file->capacite = capacite;
     file->taille = 0;
     file->debut = 0;
-    file->fin = -1;
-    file->tableau = (int*)malloc(file->capacite * sizeof(int));
+    file->fin = 0;
+    file->tableau = (int*)malloc((file->capacite+1) * sizeof(int));
     return file;
 }
 // Fonction pour vérifier si la file est vide
@@ -92,19 +92,24 @@ int estVide(File* file) {
     return file->taille == 0;
 }
 // Fonction pour ajouter un élément à la file
-void enfiler(File* file, int element) {
-    if (file->fin == file->capacite - 1) {
-        file->fin = -1;
+int enfiler(File* file, int element) {
+    if (file->taille == file->capacite) {
+        printf("Erreur : dépassement de la taille de la file.\n");
+        return -1;
     }
-    file->tableau[++file->fin] = element;
+    file->tableau[file->fin] = element;
     file->taille++;
+    file->fin++;
+
 }
-// Fonction pour retirer un élément de la file
 int defiler(File* file) {
-    int temp = file->tableau[file->debut++];
-    if (file->debut == file->capacite) {
-        file->debut = 0;
+    if (file->taille == 0) {
+        printf("Erreur : file vide.\n");
+        return -1; // Ou tout autre valeur appropriée
     }
+
+    int temp = file->tableau[file->debut];
+    file->debut++;
     file->taille--;
     return temp;
 }
