@@ -20,7 +20,7 @@ typedef struct Sommet* pSommet;
 struct Arc
 {
     int sommet; // numéro de sommet d'un arc adjacent au sommet initial
-    int poid;
+    float poid;
     struct Arc* arc_suivant; //liste chainer d'arc
 };
 /* Structure d'un sommet*/

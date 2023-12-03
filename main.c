@@ -1,6 +1,7 @@
 #include "base_graphe.h"
 #include "exclusion.h"
 #include "precedence + exclusion .h"
+#include "toute_contrainte.h"
 
 int main() {
     system("cls");
