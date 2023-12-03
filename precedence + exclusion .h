@@ -147,20 +147,20 @@ int exclusion_precedence_main(){
     for (int i = 0; i < gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
     }
-
     //on possede maintenant toutes les information dans un graphe, reste a trouver le moyen de les trier
+
+    //nous cherchons maintenant a faire PERT pour avoir un graphe de pert et savoir quel tache utiliser
+    //aant une autre en fonction de -son temps le plus tot
+    //                              -son temps le plus tard
+    //pour cela nous devons trouver la source
+    //puis parcourir le graphe de precedence en fonction de la source
+
     //pour les trier,
     //- on pourrait separer le graph en deux, dans la premiere moitier, toutes les station qui sont de la
     //  meme couleur ou qui n'ont pas de contrainte sont mis ensemble, ensuite
     //- trier dans les station deja cree par le fonction d'exclusion en fonction des precedences en
     //  n'oubliant pas qu'on peut utiliser les sommmet qui n'on pas de contrainte d'exclusion
 
-
-    /* pour le programme ou on prend tout a la fois
-     *      pour trier, on doit partir de la contrainte d'exclusion puis faire
-     *
-     *
-     *
-     */
 }
+
 #endif //OPTI_LIGNE_ASSEMBLAGE_PRECEDENCE_EXCLUSION_H
