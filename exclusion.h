@@ -129,7 +129,7 @@ int welsh_powell(Graphe * graphe) {
     //on compte le degres des sommet qu'on stocke dans un tableau
     for (int i = 0; i < graphe->ordre+1; i++) {
         count = 0;
-        pArc arc = graphe->pSommet[i]->arc;
+        pArc arc = graphe->pSommet[i]->arc_sortant;
         while (arc != NULL) {
             count++;
             arc = arc->arc_suivant;
@@ -205,7 +205,7 @@ int welsh_powell(Graphe * graphe) {
             }
 
             //on chek les adjacents du sommet
-            pArc arc = graphe->pSommet[degre[i][0]]->arc;
+            pArc arc = graphe->pSommet[degre[i][0]]->arc_sortant;
             while (arc != NULL) {
                 //si le sommmet a un adjacent deja colorer de la couleur actuel
                 if (graphe->pSommet[arc->sommet]->couleur == couleur) {

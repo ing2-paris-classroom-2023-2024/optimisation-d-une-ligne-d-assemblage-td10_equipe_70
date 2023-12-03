@@ -26,7 +26,8 @@ struct Arc
 /* Structure d'un sommet*/
 struct Sommet
 {
-    struct Arc* arc; //liste des arcs adjacents
+    struct Arc* arc_sortant; //liste des arcs adjacents
+    struct Arc* arc_entrant;
     int valeur;
     char couleur;
 
@@ -60,7 +61,7 @@ void afficher_successeurs(pSommet * sommet, int num)
 
     printf(" sommet %d :\n",num);
 
-    pArc arc=sommet[num]->arc;
+    pArc arc=sommet[num]->arc_sortant;
 
     while(arc!=NULL)
     {
@@ -69,21 +70,71 @@ void afficher_successeurs(pSommet * sommet, int num)
     }
 
 }
-// Ajouter l'arête entre les sommets s1 et s2 du graphe
-pSommet* CreerArete(pSommet* sommet,int s1,int s2)
+void afficher_predecesseur(pSommet * sommet, int num)
 {
-    if(sommet[s1]->arc==NULL)
+
+    printf(" sommet %d :\n",num);
+
+    pArc arc=sommet[num]->arc_entrant;
+
+    while(arc!=NULL)
+    {
+        printf("%d ",arc->sommet);
+        arc=arc->arc_suivant;
+    }
+
+}
+// Ajouter arc sortant (succeseur) s1 s2
+pSommet* CreerArete_sortant(pSommet* sommet,int s1,int s2)
+{
+    if(sommet[s1]->arc_sortant==NULL)
     {
         pArc Newarc=(pArc)malloc(sizeof(struct Arc));
         Newarc->sommet=s2;
         Newarc->arc_suivant=NULL;
-        sommet[s1]->arc=Newarc;
+        sommet[s1]->arc_sortant=Newarc;
         return sommet;
     }
 
     else
     {
-        pArc temp=sommet[s1]->arc;
+        pArc temp=sommet[s1]->arc_sortant;
+        while( !(temp->arc_suivant==NULL))
+        {
+            temp=temp->arc_suivant;
+        }
+        pArc Newarc=(pArc)malloc(sizeof(struct Arc));
+        Newarc->sommet=s2;
+        Newarc->arc_suivant=NULL;
+
+        if(temp->sommet>s2)
+        {
+            Newarc->arc_suivant=temp->arc_suivant;
+            Newarc->sommet=temp->sommet;
+            temp->sommet=s2;
+            temp->arc_suivant=Newarc;
+            return sommet;
+        }
+
+        temp->arc_suivant=Newarc;
+        return sommet;
+    }
+}
+//ajouter arc entrant ( predecesseur) S2 S1
+pSommet* CreerArete_entrant(pSommet* sommet,int s1,int s2)
+{
+    if(sommet[s1]->arc_entrant==NULL)
+    {
+        pArc Newarc=(pArc)malloc(sizeof(struct Arc));
+        Newarc->sommet=s2;
+        Newarc->arc_suivant=NULL;
+        sommet[s1]->arc_entrant=Newarc;
+        return sommet;
+    }
+
+    else
+    {
+        pArc temp=sommet[s1]->arc_entrant;
         while( !(temp->arc_suivant==NULL))
         {
             temp=temp->arc_suivant;
@@ -115,7 +166,8 @@ Graphe* CreerGraphe(int ordre)
     {
         Newgraphe->pSommet[i]=(pSommet)malloc(sizeof(struct Sommet));
         Newgraphe->pSommet[i]->valeur=i;
-        Newgraphe->pSommet[i]->arc=NULL;
+        Newgraphe->pSommet[i]->arc_entrant=NULL;
+        Newgraphe->pSommet[i]->arc_sortant=NULL;
         Newgraphe->pSommet[i]->couleur = 'b';
     }
     return Newgraphe;
@@ -132,13 +184,14 @@ Graphe * nouv_graphe_pas_oriente(int ordre,int taille ,int **valeur ) {
 
     // créer les arêtes du graphe depuis les valeurs du tableau
     for (int i = 0; i < taille; i++) {
-        graphe->pSommet = CreerArete(graphe->pSommet, valeur[i][0],valeur[i][1]);
-        graphe->pSommet = CreerArete(graphe->pSommet, valeur[i][1],valeur[i][0]);
+        graphe->pSommet = CreerArete_sortant(graphe->pSommet, valeur[i][0],valeur[i][1]);
+        graphe->pSommet = CreerArete_sortant(graphe->pSommet, valeur[i][1],valeur[i][0]);
     }
     return graphe;
 }
 //meme fonction sauf que on cree que 1 arrete au lieu de deux
 Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur ) {
+
     Graphe *graphe;
 ///est ce que l'ordre doit etre le nombre de sommet different ou le sommet le plus elever ?
     graphe = CreerGraphe(ordre); // créer le graphe d'ordre sommets
@@ -149,7 +202,8 @@ Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur ) {
 
     // créer les arêtes du graphe depuis les valeurs du tableau
     for (int i = 0; i < taille; i++) {
-        graphe->pSommet = CreerArete(graphe->pSommet, valeur[i][0],valeur[i][1]);
+        graphe->pSommet = CreerArete_sortant(graphe->pSommet, valeur[i][0],valeur[i][1]);
+        graphe->pSommet = CreerArete_entrant(graphe->pSommet, valeur[i][1],valeur[i][0]);
     }
     return graphe;
 }
@@ -163,11 +217,15 @@ void afficher_graph(Graphe* graphe,int grand_sommet)
     printf("ordre = %d\n",graphe->ordre);
 
     printf("listes d'adjacence :\n");
-///ici on met soit le plus grand sommet et donc on affiche 30 sommet ou on met l'ordre et on affiche seulemetn le nombre
-///de sommet differents soit un peut moins ou beaucoup moins en fonction des graphs
     for (int i=0; i <= grand_sommet; i++)
     {
         afficher_successeurs(graphe->pSommet, i);
+        printf("\n");
+    }
+    printf("listes de precedence :\n");
+    for (int i=0; i <= grand_sommet; i++)
+    {
+        afficher_predecesseur(graphe->pSommet, i);
         printf("\n");
     }
 
