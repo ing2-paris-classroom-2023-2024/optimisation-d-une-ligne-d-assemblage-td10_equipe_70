@@ -16,7 +16,7 @@ int main() {
     printf(" Voulez vous utiliser une contraint d'exclusion et de temps de cycle ? (4)\n");
     printf(" voulez vous quitter ? (0)\n");
 
-    while(choix<0 || choix>4) {
+    while(choix<0 || choix>5) {
         scanf("%d", &choix);
         fflush(stdin);
     }
@@ -41,6 +41,13 @@ int main() {
         case 4 :
             printf("vous avez choisi exclusion + temps de cycle\n");
             break;
+
+        case 5 :
+            printf("vous avez choisi toutes les contraites \n");
+
+            toute_contraint();
+            break;
+
 
         case 0 :
             printf("vous avez choisi de nous quitter \n");

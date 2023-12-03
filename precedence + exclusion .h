@@ -54,11 +54,11 @@ int lecture_fichier_precedence( char *nomfichier,int ***valeur){
 
     }
 
-    // Afficher les valeurs stockées dans le tableau
+    /*// Afficher les valeurs stockées dans le tableau
     for (int i = 0; i < nombreDeLignes; i++) {
         printf("Ligne %d : %d %d\n", i + 1, (*valeur)[i][0], (*valeur)[i][1]);
     }
-
+*/
     fclose(fichier);
     return nombreDeLignes;
     //dans cette fonction on récupere les données sous la forme d'un tableau ainsi que

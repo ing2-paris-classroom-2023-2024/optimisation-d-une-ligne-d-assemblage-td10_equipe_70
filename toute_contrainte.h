@@ -10,13 +10,15 @@
 #define OPTI_LIGNE_ASSEMBLAGE_TOUTE_CONTRAINTE_H
 //fonction qui permet de trouver lA source dans un graphe
 // changer pour trouver les sources
-int trouverSource(Graphe* graphe) {
+int trouverSource(Graphe* graphe,float ** valeur) {
     // Tableau pour stocker le degré entrant de chaque sommet
     int degreEntrant[graphe->ordre];
+    int existe[graphe->ordre] ;
 
-    // Initialiser tous les degrés entrants à zéro
+    // Initialiser tous les degrés entrants à zéro et dire que tout les sommet existe
     for (int i = 0; i < graphe->ordre; i++) {
         degreEntrant[i] = 0;
+        existe[i] = 0;
     }
 
     // Calculer les degrés entrants pour chaque sommet
@@ -27,16 +29,39 @@ int trouverSource(Graphe* graphe) {
             arc = arc->arc_suivant;
         }
     }
+    for (int i = 0; i < graphe->ordre; i++) {
+        if(valeur[i][1] == 0){
+            existe[i] = 1;
+        }
+    }
 
     // Trouver le sommet sans prédécesseur (degré entrant égal à zéro)
     for (int i = 0; i < graphe->ordre; i++) {
-        if (degreEntrant[i] == 0) {
+        if (degreEntrant[i] == 0 & existe[i] == 0) {
             return i;
         }
     }
 
     // Si aucun sommet sans prédécesseur n'est trouvé, retourner -1
     return -1;
+}
+//pour trouver la valeur max des predecesseur
+int trouverValeurMaxPredecesseurs(pSommet* sommet,int i) {
+
+    //on prend le numero de sommet du predecesseur
+    int val = sommet[i]->arc_entrant->sommet;
+    // Initialiser la valeur maximale avec la première valeur de prédécesseur
+    int valeurMax = sommet[val]->valeur;
+
+    // Parcourir la liste des prédécesseurs et mettre à jour la valeur maximale si nécessaire
+    pArc predecesseur = sommet[i]->arc_entrant;
+    while (predecesseur != NULL) {
+        if (sommet[predecesseur->sommet]->valeur > valeurMax) {
+            valeurMax = sommet[predecesseur->sommet]->valeur;
+        }
+        predecesseur = predecesseur->arc_suivant;
+    }
+    return valeurMax;
 }
 
 // fonction pour lire le fichier de temps de cycle
@@ -85,11 +110,11 @@ int lecture_fichier_temps( char *nomfichier,float ***valeur){
 
     }
 
-    // Afficher les valeurs stockées dans le tableau
+    /*// Afficher les valeurs stockées dans le tableau
     for (int i = 0; i < nombreDeLignes; i++) {
         printf("Ligne %d : %f %f\n", i + 1, (*valeur)[i][0], (*valeur)[i][1]);
     }
-
+*/
     fclose(fichier);
     return nombreDeLignes;
     //dans cette fonction on récupere les données sous la forme d'un tableau ainsi que
@@ -131,51 +156,59 @@ void BFS(Graphe* graphe, int depart) {
     enfiler(file, depart);
     ///lui attribuer son temps qui vient du tableau des temps
 
-    // Tant que la file n'est pas vide
     while (!estVide(file)) {
         // Défiler un sommet de la file et l'afficher
         int sommetCourant = defiler(file);
+        int val ;
         printf("%d ", sommetCourant);
 
         // Parcourir tous les successeurs du sommet actuel
-        struct Arc* successeur = graphe->pSommet[sommetCourant]->arc_sortant;
+        pArc successeur = graphe->pSommet[sommetCourant]->arc_sortant;
         while (successeur != NULL) {
             // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
             if (!visite[successeur->sommet]) {
                 visite[successeur->sommet] = 1;
                 enfiler(file, successeur->sommet);
-            }
+                //le sommet est maintenant enfiler et visiter, avant de passer au suivant
+                // Ajouter la valeur du prédécesseur à la valeur du successeur pour tout les succeseur de sommet courant
+                //val = valeur max des predecesseurs
+                 val = trouverValeurMaxPredecesseurs(graphe->pSommet,successeur->sommet);
+                 //on ajoute cette valeur en tant que la valeur du succeseur
+                 graphe->pSommet[successeur->sommet]->valeur += val;
+
+                }
+            //on passe au succeseur suivant
             successeur = successeur->arc_suivant;
         }
-    }
 
     // Libérer la mémoire allouée
     free(visite);
     libererFile(file);
+    }
 }
-
-// cree le graphe de precedence en fonction du temps de cycle et des precedences, on veut recupere
-//un graphe orienter ponderer
-
-//y ajouter les couleurs obtenue par la coloration
-
-// trier les sommets
 
 int toute_contraint(){
     char *nomfichier = NULL;
+
     int ** valeurprede = NULL ;
     int ** valeurexclu = NULL ;
     float ** valeurtemps = NULL;
+
     int nb_lignesprede;
     int nb_lignesexclu;
     int nb_lignetemps;
+
     int gr_sommetprede;
     int gr_sommetexclu;
     int gr_sommettemps;
+
     Graphe * graphe_prede;
     Graphe * graphe_exclu;
     size_t tailleMax = 100;  // Taille maximale du nom de fichier
-    ///////////////////on cherche tout dabord a recuperer toutes les valeurs ////////////////////////////////////////////
+    int source;
+    float ** temps;
+
+        ///////////////////on cherche tout dabord a recuperer toutes les valeurs ////////////////////////////////////////////
 
 
 ////la precedence //////////
@@ -224,20 +257,53 @@ int toute_contraint(){
     nb_lignetemps = lecture_fichier_temps(nomfichier,&valeurtemps);
     gr_sommettemps = grand_sommet_temps(valeurtemps,nb_lignetemps);
 
+    // Allouer un tableau dynamique pour stocker les valeurs du temps
+    temps = malloc(gr_sommettemps *sizeof(float *));
+    if (temps == NULL) {
+        fprintf(stderr, "Erreur d'allocation mémoire pour le tableau de pointeurs.\n");
+        return 1;
+    }
+
+    // Allouer les tableaux d'entiers pour chaque ligne
+    for (int i = 0; i <= gr_sommettemps; i++) {
+        temps[i] = malloc(2 * sizeof(float));
+        if (temps[i] == NULL) {
+            fprintf(stderr, "Erreur d'allocation mémoire pour la ligne %d.\n", i);
+            return 1;
+        }
+    }
+    //on initialise a 0 toutes les valeurs
+    for (int i = 0; i <= gr_sommettemps; i++) {
+        for (int j = 0; j < 2; j++) {
+            temps[i][j] = 0;
+        }
+    }
+
+    //on transvase les valeur dans un tableau ou chaque case represente un sommet, et on les a tous meme ceux qui
+    //n'existe pas
+    for (int i = 0; i <= gr_sommettemps; i++) {
+        for (int j = 0; j < nb_lignetemps; j++) {
+            if(valeurtemps[j][0] == i){
+                temps[i][0] = i;
+                temps[i][1] = valeurtemps[j][1];
+            }
+        }
+    }
+
 
 
     //tout d'abord, cree le graph des precedence
 
     printf("____________________nous allons maintenant afficher le graphe de precedence____________________ \n");
     graphe_prede = nouv_graphe_oriente(gr_sommetprede,nb_lignesprede,valeurprede);
-    afficher_graph(graphe_prede,gr_sommetprede);
+    //afficher_graph(graphe_prede,gr_sommetprede);
 
 
     //ensuite on fait la coloration sur le graph d'exclusion pour avoir les couleurs
 
     printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
     graphe_exclu = nouv_graphe_pas_oriente(gr_sommetexclu,nb_lignesexclu,valeurexclu);
-    afficher_graph(graphe_exclu,gr_sommetexclu);
+    //afficher_graph(graphe_exclu,gr_sommetexclu);
     printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
     welsh_powell(graphe_exclu);
     printf("_______________l'algorithme de welsh powell est terminer_______________\n");
@@ -248,6 +314,16 @@ int toute_contraint(){
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
     }
 
+    //regarder dans le tableau de operation, les valeur qui sont a O si 0 alors ca n'existe pas donc par consequent on
+    // transmet ca dans trouver sources
+
+    //maintenant, nous allons parcourir le graph de precedence pour assigner les valeur de prioriter des operation
+    //cad on fait un pert modifier avec les temps les plus tot
+    //pour choisir le sommet de départ du BFS, on trouve la source du graph
+
+    source = trouverSource(graphe_prede,temps);
+
+    BFS(graphe_prede,source);
 
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_TOUTE_CONTRAINTE_H

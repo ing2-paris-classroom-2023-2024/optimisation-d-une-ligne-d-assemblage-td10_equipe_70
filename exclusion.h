@@ -57,11 +57,11 @@ int lecture_fichier_exclusion( char *nomfichier,int ***valeur){
 
     }
 
-    // Afficher les valeurs stockées dans le tableau
+   /* // Afficher les valeurs stockées dans le tableau
     for (int i = 0; i < nombreDeLignes; i++) {
         printf("Ligne %d : %d %d\n", i + 1, (*valeur)[i][0], (*valeur)[i][1]);
     }
-
+*/
     fclose(fichier);
     return nombreDeLignes;
     //dans cette fonction on récupere les données sous la forme d'un tableau ainsi que
@@ -139,7 +139,7 @@ int welsh_powell(Graphe * graphe) {
         //degrer 1 = le degrer des sommet
         degre[i][1] = count;
     }
-    printf("comptage des sommet\n");
+    //printf("comptage des sommet\n");
     //trier les sommet par ordre decroissant en fonction de leur degrer
     for (int i = 0; i < graphe->ordre ; i++) {
         for (int j = 0; j < graphe->ordre - i ; j++) {
@@ -154,12 +154,12 @@ int welsh_powell(Graphe * graphe) {
             }
         }
     }
-    printf("triage des sommet dans le tableau \n");
+    /*printf("triage des sommet dans le tableau \n");
     //affichage test du tableau contenant les degrer avec leur sommet
     printf(" ______Affichage test du tableau_____\n");
     for (int i = 0; i < graphe->ordre+1; i++) {
         printf("(%d, %d)\n ", degre[i][0], degre[i][1]);
-    }
+    }*/
 
     //attribuer les couleur en partant du debut du tableau et on donne dabord une couleur puis autre
     //on regarde la couleur du sommet si il est deja colorer ou pas
@@ -176,7 +176,7 @@ int welsh_powell(Graphe * graphe) {
         if (degre[j][1] == 0) {
             graphe->pSommet[degre[j][0]]->couleur = 'n';
         }}
-    printf(" on colore tout les sommet qui sont isoler\n");
+    //printf(" on colore tout les sommet qui sont isoler\n");
 
 
 
@@ -189,11 +189,11 @@ int welsh_powell(Graphe * graphe) {
             colorer[i] = 0;
             adj_colorer[i] = 0;
         }
-        printf(" initialisation des tableau colorer et adj_colorer\n");
+        //printf(" initialisation des tableau colorer et adj_colorer\n");
 
         //on augmente de un le nombre  couleur a chaque itération de la boucle
         nb_couleur++;
-        printf("la couleur %c est la %d couleur \n",couleur, nb_couleur);
+        //printf("la couleur %c est la %d couleur \n",couleur, nb_couleur);
 
 //pour chaque couleur on regarde dans tout le tableau et on remplir les couleurs
 //dans les sommet qui remplissent les conditions
@@ -218,15 +218,15 @@ int welsh_powell(Graphe * graphe) {
             //si le sommet n'est pas colorer et qu'il n'a pas d'adjacents colorer
             //alors on le colore
             if (colorer[i] == 0 & adj_colorer[i] == 0) {
-                printf("le sommet %d est maintenant colorer en %c\n", degre[i][0], couleur);
+                //printf("le sommet %d est maintenant colorer en %c\n", degre[i][0], couleur);
                 graphe->pSommet[degre[i][0]]->couleur = couleur;
             }
         }
             //////fin de la boucle on change les couleur /////
             //on change de couleur
-            printf(" couleur %c devient ",couleur);
+            //printf(" couleur %c devient ",couleur);
             couleur++;
-            printf(" %c \n",couleur);
+            //printf(" %c \n",couleur);
             //on dit qu'il ne reste plus de sommet a colorer( en sachant que cette condition est verifier apres
             //comme ca tant qu'il reste des sommet non colorer cette valeur ne va pas s'apliquer
             restant = 0;
