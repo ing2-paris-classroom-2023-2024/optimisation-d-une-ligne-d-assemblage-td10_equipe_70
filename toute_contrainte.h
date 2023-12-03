@@ -12,32 +12,37 @@
 // changer pour trouver les sources
 int trouverSource(Graphe* graphe,float ** valeur) {
     // Tableau pour stocker le degré entrant de chaque sommet
-    int degreEntrant[graphe->ordre];
-    int existe[graphe->ordre] ;
+    int degreEntrant[graphe->ordre+1];
+    int existe[graphe->ordre+1] ;
 
     // Initialiser tous les degrés entrants à zéro et dire que tout les sommet existe
-    for (int i = 0; i < graphe->ordre; i++) {
+    for (int i = 0; i <= graphe->ordre; i++) {
         degreEntrant[i] = 0;
         existe[i] = 0;
+        printf(" %d %d ",degreEntrant[i],existe[i] );
     }
+    printf(" \nles deux tableau sont initialiser \n");
 
     // Calculer les degrés entrants pour chaque sommet
-    for (int i = 0; i < graphe->ordre; i++) {
+    for (int i = 0; i <= graphe->ordre; i++) {
         pArc arc = graphe->pSommet[i]->arc_entrant;
         while (arc != NULL) {
             degreEntrant[arc->sommet]++;
             arc = arc->arc_suivant;
         }
+        printf(" sommet %d degre = %d \n",i,degreEntrant[arc->sommet]);
     }
-    for (int i = 0; i < graphe->ordre; i++) {
-        if(valeur[i][1] == 0){
+    for (int i = 0; i <= graphe->ordre; i++) {
+        if(valeur[i][1] == 0.000000){
             existe[i] = 1;
+            printf(" sommet %d existe pas \n",i);
         }
     }
 
-    // Trouver le sommet sans prédécesseur (degré entrant égal à zéro)
-    for (int i = 0; i < graphe->ordre; i++) {
+    // Trouver le sommet sans prédécesseur (degré entrant égal à zéro) qui existe
+    for (int i = 0; i <= graphe->ordre; i++) {
         if (degreEntrant[i] == 0 & existe[i] == 0) {
+            printf(" \n source = %d\n", i);
             return i;
         }
     }
@@ -45,24 +50,7 @@ int trouverSource(Graphe* graphe,float ** valeur) {
     // Si aucun sommet sans prédécesseur n'est trouvé, retourner -1
     return -1;
 }
-//pour trouver la valeur max des predecesseur
-int trouverValeurMaxPredecesseurs(pSommet* sommet,int i) {
 
-    //on prend le numero de sommet du predecesseur
-    int val = sommet[i]->arc_entrant->sommet;
-    // Initialiser la valeur maximale avec la première valeur de prédécesseur
-    int valeurMax = sommet[val]->valeur;
-
-    // Parcourir la liste des prédécesseurs et mettre à jour la valeur maximale si nécessaire
-    pArc predecesseur = sommet[i]->arc_entrant;
-    while (predecesseur != NULL) {
-        if (sommet[predecesseur->sommet]->valeur > valeurMax) {
-            valeurMax = sommet[predecesseur->sommet]->valeur;
-        }
-        predecesseur = predecesseur->arc_suivant;
-    }
-    return valeurMax;
-}
 
 // fonction pour lire le fichier de temps de cycle
 int lecture_fichier_temps( char *nomfichier,float ***valeur){
@@ -137,24 +125,35 @@ int grand_sommet_temps(float ** valeur, int lignes ){
     return grand_sommet;
 
 }
+//pour trouver la valeur max des predecesseur
+int trouverValeurMaxPredecesseurs(pSommet* sommet,int i) {
+
+    //on prend le numero de sommet du predecesseur
+    int val = sommet[i]->arc_entrant->sommet;
+    // Initialiser la valeur maximale avec la première valeur de prédécesseur
+    int valeurMax = sommet[val]->valeur;
+
+    // Parcourir la liste des prédécesseurs et mettre à jour la valeur maximale si nécessaire
+    pArc predecesseur = sommet[i]->arc_entrant;
+    while (predecesseur != NULL) {
+        if (sommet[predecesseur->sommet]->valeur > valeurMax) {
+            valeurMax = sommet[predecesseur->sommet]->valeur;
+        }
+        predecesseur = predecesseur->arc_suivant;
+    }
+    return valeurMax;
+}
 
 // Algorithme de parcours en largeur (BFS)
 void BFS(Graphe* graphe, int depart) {
-    // Tableau pour marquer les sommets visités
-    int* visite = (int*)malloc(graphe->ordre * sizeof(int));
 
-    // Initialiser le tableau de visite à 0 (non visité)
-    for (int i = 0; i < graphe->ordre; i++) {
-        visite[i] = 0;
-    }
 
     // Créer une file pour le BFS
     File* file = creerFile(graphe->ordre);
 
     // Marquer le sommet de départ comme visité et l'enfiler
-    visite[depart] = 1;
+    graphe->pSommet[depart]->marque = 1;
     enfiler(file, depart);
-    ///lui attribuer son temps qui vient du tableau des temps
 
     while (!estVide(file)) {
         // Défiler un sommet de la file et l'afficher
@@ -166,8 +165,8 @@ void BFS(Graphe* graphe, int depart) {
         pArc successeur = graphe->pSommet[sommetCourant]->arc_sortant;
         while (successeur != NULL) {
             // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
-            if (!visite[successeur->sommet]) {
-                visite[successeur->sommet] = 1;
+            if (graphe->pSommet[successeur->sommet]->marque == 0) {
+                graphe->pSommet[successeur->sommet]->marque = 1;
                 enfiler(file, successeur->sommet);
                 //le sommet est maintenant enfiler et visiter, avant de passer au suivant
                 // Ajouter la valeur du prédécesseur à la valeur du successeur pour tout les succeseur de sommet courant
@@ -182,13 +181,14 @@ void BFS(Graphe* graphe, int depart) {
         }
 
     // Libérer la mémoire allouée
-    free(visite);
     libererFile(file);
     }
 }
 
 int toute_contraint(){
-    char *nomfichier = NULL;
+    char *nomfichierexclu = NULL;
+    char *nomfichierprede = NULL;
+    char *nomfichiertemp = NULL;
 
     int ** valeurprede = NULL ;
     int ** valeurexclu = NULL ;
@@ -213,52 +213,52 @@ int toute_contraint(){
 
 ////la precedence //////////
     // Allocation dynamique pour le nom de fichier
-    nomfichier = (char *)malloc(tailleMax * sizeof(char));
-    if (nomfichier == NULL) {
+    nomfichierprede = (char *)malloc(tailleMax * sizeof(char));
+    if (nomfichierprede == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire.\n");
         return 1;
     }
     //on recupere le nom du fichier
     printf("Entrez le nom du fichier de precedence : \n");
-    scanf("%99s", nomfichier);
+    scanf("%99s", nomfichierprede);
     fflush(stdin);
 
-    nb_lignesprede = lecture_fichier_precedence(nomfichier,&valeurprede);
+    nb_lignesprede = lecture_fichier_precedence(nomfichierprede,&valeurprede);
     gr_sommetprede = grand_sommet_precedence(valeurprede,nb_lignesprede);
 
 
 //////////l'exclusion/////////////
     // Allocation dynamique pour le nom de fichier
-    nomfichier = (char *)malloc(tailleMax * sizeof(char));
-    if (nomfichier == NULL) {
+    nomfichierexclu = (char *)malloc(tailleMax * sizeof(char));
+    if (nomfichierexclu == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire.\n");
         return 1;
     }
     //on recupere le nom du fichier
     printf("Entrez le nom du fichier d'exclusion : \n");
-    scanf("%99s", nomfichier);
+    scanf("%99s", nomfichierexclu);
     fflush(stdin);
 
-    nb_lignesexclu = lecture_fichier_exclusion(nomfichier,&valeurexclu);
+    nb_lignesexclu = lecture_fichier_exclusion(nomfichierexclu,&valeurexclu);
     gr_sommetexclu = grand_sommet(valeurexclu,nb_lignesexclu);
 
 
 ////////////le temps de cycle ///////////////
-    nomfichier = (char *)malloc(tailleMax * sizeof(char));
-    if (nomfichier == NULL) {
+    nomfichiertemp = (char *)malloc(tailleMax * sizeof(char));
+    if (nomfichiertemp == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire.\n");
         return 1;
     }
     //on recupere le nom du fichier
     printf("Entrez le nom du fichier de temps operation : \n");
-    scanf("%99s", nomfichier);
+    scanf("%99s", nomfichiertemp);
     fflush(stdin);
 
-    nb_lignetemps = lecture_fichier_temps(nomfichier,&valeurtemps);
+    nb_lignetemps = lecture_fichier_temps(nomfichiertemp,&valeurtemps);
     gr_sommettemps = grand_sommet_temps(valeurtemps,nb_lignetemps);
 
     // Allouer un tableau dynamique pour stocker les valeurs du temps
-    temps = malloc(gr_sommettemps *sizeof(float *));
+    temps = malloc((gr_sommettemps+1) *sizeof(float *));
     if (temps == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire pour le tableau de pointeurs.\n");
         return 1;
@@ -282,12 +282,15 @@ int toute_contraint(){
     //on transvase les valeur dans un tableau ou chaque case represente un sommet, et on les a tous meme ceux qui
     //n'existe pas
     for (int i = 0; i <= gr_sommettemps; i++) {
+        temps[i][0] = i;
         for (int j = 0; j < nb_lignetemps; j++) {
             if(valeurtemps[j][0] == i){
-                temps[i][0] = i;
+
                 temps[i][1] = valeurtemps[j][1];
+
             }
         }
+        printf(" %f %f \n",temps[i][0],temps[i][1]);
     }
 
 
@@ -296,22 +299,23 @@ int toute_contraint(){
 
     printf("____________________nous allons maintenant afficher le graphe de precedence____________________ \n");
     graphe_prede = nouv_graphe_oriente(gr_sommetprede,nb_lignesprede,valeurprede);
-    //afficher_graph(graphe_prede,gr_sommetprede);
+    afficher_graph(graphe_prede,gr_sommetprede);
 
 
     //ensuite on fait la coloration sur le graph d'exclusion pour avoir les couleurs
 
     printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
     graphe_exclu = nouv_graphe_pas_oriente(gr_sommetexclu,nb_lignesexclu,valeurexclu);
-    //afficher_graph(graphe_exclu,gr_sommetexclu);
+    afficher_graph(graphe_exclu,gr_sommetexclu);
     printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
     welsh_powell(graphe_exclu);
     printf("_______________l'algorithme de welsh powell est terminer_______________\n");
 
     // on rajoute les couleur obtenue grace a l'exclusion dans le graphe de precedence
     //on par du principe que les deux graphe on le meme nombre de sommet
-    for (int i = 0; i < gr_sommetprede; i++) {
+    for (int i = 0; i <= gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
+        printf(" sommet %d = %c \n ",i,graphe_exclu->pSommet[i]->couleur);
     }
 
     //regarder dans le tableau de operation, les valeur qui sont a O si 0 alors ca n'existe pas donc par consequent on

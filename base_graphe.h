@@ -30,6 +30,7 @@ struct Sommet
     struct Arc* arc_entrant;
     int valeur;
     char couleur;
+    int marque ;
 
 };
 /* structure d'un Graphe */
@@ -230,6 +231,7 @@ Graphe* CreerGraphe(int ordre)
         Newgraphe->pSommet[i]->arc_entrant=NULL;
         Newgraphe->pSommet[i]->arc_sortant=NULL;
         Newgraphe->pSommet[i]->couleur = 'b';
+        Newgraphe->pSommet[i]->marque = 0;
     }
     return Newgraphe;
 }
