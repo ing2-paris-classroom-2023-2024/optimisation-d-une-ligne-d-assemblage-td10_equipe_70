@@ -113,6 +113,47 @@ int grand_sommet_temps(float ** valeur, int lignes ){
 
 }
 
+// Algorithme de parcours en largeur (BFS)
+void BFS(Graphe* graphe, int depart) {
+    // Tableau pour marquer les sommets visités
+    int* visite = (int*)malloc(graphe->ordre * sizeof(int));
+
+    // Initialiser le tableau de visite à 0 (non visité)
+    for (int i = 0; i < graphe->ordre; i++) {
+        visite[i] = 0;
+    }
+
+    // Créer une file pour le BFS
+    File* file = creerFile(graphe->ordre);
+
+    // Marquer le sommet de départ comme visité et l'enfiler
+    visite[depart] = 1;
+    enfiler(file, depart);
+    ///lui attribuer son temps qui vient du tableau des temps
+
+    // Tant que la file n'est pas vide
+    while (!estVide(file)) {
+        // Défiler un sommet de la file et l'afficher
+        int sommetCourant = defiler(file);
+        printf("%d ", sommetCourant);
+
+        // Parcourir tous les successeurs du sommet actuel
+        struct Arc* successeur = graphe->pSommet[sommetCourant]->arc_sortant;
+        while (successeur != NULL) {
+            // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
+            if (!visite[successeur->sommet]) {
+                visite[successeur->sommet] = 1;
+                enfiler(file, successeur->sommet);
+            }
+            successeur = successeur->arc_suivant;
+        }
+    }
+
+    // Libérer la mémoire allouée
+    free(visite);
+    libererFile(file);
+}
+
 // cree le graphe de precedence en fonction du temps de cycle et des precedences, on veut recupere
 //un graphe orienter ponderer
 

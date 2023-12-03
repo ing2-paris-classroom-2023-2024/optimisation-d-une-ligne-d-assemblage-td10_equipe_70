@@ -39,6 +39,14 @@ typedef struct Graphe
     int ordre;
     pSommet* pSommet;//tableau de pointeur de sommet
 } Graphe;
+// File utilisée pour le BFS
+typedef struct File {
+    int* tableau;
+    int taille;
+    int capacite;
+    int debut;
+    int fin;
+} File;
 
 ///////////////////////////liste des fonctions de bases  ///////////////////////////////
 // créer le graphe pouvant contenire ordre sommet
@@ -52,6 +60,59 @@ pSommet* CreerArete(pSommet* sommet,int s1,int s2);
 void afficher_successeurs(pSommet * sommet, int num);
 //affichage du graphe avec les successeurs de chaque sommet
 void afficher_graph(Graphe* graphe,int grand_sommet);
+
+///////////////////////liste des fonction de la file //////////////////////////:::
+
+// Fonction pour créer une file
+File* creerFile(int capacite);
+// Fonction pour vérifier si la file est vide
+int estVide(File* file);
+// Fonction pour ajouter un élément à la file
+void enfiler(File* file, int element);
+// Fonction pour retirer un élément de la file
+int defiler(File* file);
+// Fonction pour libérer la mémoire de la file
+void libererFile(File* file);
+
+
+///////////////////////fonction de la file //////////////////////////:::
+// Fonction pour créer une file
+File* creerFile(int capacite) {
+    File* file = (File*)malloc(sizeof(File));
+    file->capacite = capacite;
+    file->taille = 0;
+    file->debut = 0;
+    file->fin = -1;
+    file->tableau = (int*)malloc(file->capacite * sizeof(int));
+    return file;
+}
+// Fonction pour vérifier si la file est vide
+int estVide(File* file) {
+    return file->taille == 0;
+}
+// Fonction pour ajouter un élément à la file
+void enfiler(File* file, int element) {
+    if (file->fin == file->capacite - 1) {
+        file->fin = -1;
+    }
+    file->tableau[++file->fin] = element;
+    file->taille++;
+}
+// Fonction pour retirer un élément de la file
+int defiler(File* file) {
+    int temp = file->tableau[file->debut++];
+    if (file->debut == file->capacite) {
+        file->debut = 0;
+    }
+    file->taille--;
+    return temp;
+}
+// Fonction pour libérer la mémoire de la file
+void libererFile(File* file) {
+    free(file->tableau);
+    free(file);
+}
+
 
 /////////////////////////Les fonciton de bases ////////////////////////
 
