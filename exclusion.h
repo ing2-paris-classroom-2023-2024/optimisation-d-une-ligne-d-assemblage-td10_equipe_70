@@ -343,6 +343,12 @@ int exclusion_main(){
     //on affiche les station en fonction des couleurs
     affichage_station_exclusion(graphe_exclu,nb_couleur);
 
+    for (int i = 0; i < nb_lignes; i++) {
+        free(valeur[i]);
+    }
+    free(*valeur);
+    free(nomfichier);
+
     system("pause");
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H

@@ -25,12 +25,18 @@ int trouverSource(Graphe* graphe,float ** valeur) {
 
     // Calculer les degrés entrants pour chaque sommet
     for (int i = 0; i <= graphe->ordre; i++) {
-        pArc arc = graphe->pSommet[i]->arc_entrant;
-        while (arc != NULL) {
-            degreEntrant[arc->sommet]++;
-            arc = arc->arc_suivant;
+        int degrer = 0;
+         printf(" sommet %d on selectionne les predecesseur %d\n",i,degrer);
+         
+         pArc arc_temp = graphe->pSommet[i]->arc_entrant;
+
+         printf("justea avant la boucle \n");
+        while (arc_temp != NULL) {
+            degrer++;
+            arc_temp = arc_temp->arc_suivant;
         }
-        printf(" sommet %d degre = %d \n",i,degreEntrant[arc->sommet]);
+        degreEntrant[i] = degrer;
+        printf(" sommet %d degre = %d \n",i,degrer);
     }
     for (int i = 0; i <= graphe->ordre; i++) {
         if(valeur[i][1] == 0.000000){
@@ -41,7 +47,7 @@ int trouverSource(Graphe* graphe,float ** valeur) {
 
     // Trouver le sommet sans prédécesseur (degré entrant égal à zéro) qui existe
     for (int i = 0; i <= graphe->ordre; i++) {
-        if (degreEntrant[i] == 0 & existe[i] == 0) {
+        if (degreEntrant[i] == 0 && existe[i] == 0) {
             printf(" \n source = %d\n", i);
             return i;
         }
@@ -329,5 +335,9 @@ int toute_contraint(){
 
     BFS(graphe_prede,source);
 
+    for (int i = 0; i <= gr_sommettemps; i++) {
+        free(temps[i]);
+    }
+    free(temps);
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_TOUTE_CONTRAINTE_H

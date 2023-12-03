@@ -161,7 +161,23 @@ int exclusion_precedence_main(){
 
     //faire un tableau avec la liste des sommet par precedence croissante (bfs)
 
+// Libération de la mémoire pour le tableau valeurprede
+    for (int i = 0; i < nb_lignesprede; i++) {
+        free(valeurprede[i]);
+    }
+    free(valeurprede);
 
+// Libération de la mémoire pour le tableau valeurexclu
+    for (int i = 0; i < nb_lignesexclu; i++) {
+        free(valeurexclu[i]);
+    }
+    free(valeurexclu);
+
+// Libération de la mémoire pour le nom de fichier de precedence
+    free(nomfichierprede);
+
+// Libération de la mémoire pour le nom de fichier d'exclusion
+    free(nomfichierexclu);
 
 }
 
