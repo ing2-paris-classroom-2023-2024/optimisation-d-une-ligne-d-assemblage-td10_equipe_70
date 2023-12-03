@@ -337,8 +337,8 @@ int exclusion_main(){
     //il faut maintenant modeliser le graph d'exclusion a sovoir chaque couple représente une arrete non orienter
 
     printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
-    graphe_exclu = nouv_graphe(gr_sommet,nb_lignes,valeur);
-    afficher_graph_exclusion(graphe_exclu,gr_sommet);
+    graphe_exclu = nouv_graphe_pas_oriente(gr_sommet,nb_lignes,valeur);
+    afficher_graph(graphe_exclu,gr_sommet);
 
     //on effectue l'algorithme de welsh powell, on attribut differentes couleur aux differents sommet;
     printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");

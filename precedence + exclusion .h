@@ -67,5 +67,40 @@ int lecture_fichier_precedence( char *nomfichier,int ***valeur){
     //le programme compte toute les lignes meme les lignes vide !!!!!!!!!
 
 }
+//lecture dans les valeur pour avoie le plus grand sommet
+int grand_sommet_precedence(int ** valeur, int lignes ){
 
+    int grand_sommet = 0;
+
+    for (int i = 0; i < lignes; i++) {
+        for (int j = 0; j < 2; j++) {
+            if( valeur[i][j] > grand_sommet){
+                grand_sommet = valeur[i][j];
+            }
+        }
+    }
+    return grand_sommet;
+
+}
+//fonction principale ajouter dans le main pour simplifier les choses
+int exclusion_precedence_main(){
+    //tout d'abord, cree le graph des precedence
+    //ensuite dans le graphe des precedence qui est un graph orienter
+    // on rajoute les couleur obtenue grace a l'exclusion
+
+    //on possede maintenant toutes les information dans un graphe, reste a trouver le moyen de les trier
+    //pour les trier,
+    //- on pourrait separer le graph en deux, dans la premiere moitier, toutes les station qui sont de la
+    //  meme couleur ou qui n'ont pas de contrainte sont mis ensemble, ensuite
+    //- trier dans les station deja cree par le fonction d'exclusion en fonction des precedences en
+    //  n'oubliant pas qu'on peut utiliser les sommmet qui n'on pas de contrainte d'exclusion
+
+
+    /* pour le programme ou on prend tout a la fois
+     *      pour trier, on doit partir de la contrainte d'exclusion puis faire
+     *
+     *
+     *
+     */
+}
 #endif //OPTI_LIGNE_ASSEMBLAGE_PRECEDENCE_EXCLUSION_H

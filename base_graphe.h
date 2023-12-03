@@ -42,13 +42,14 @@ typedef struct Graphe
 // créer le graphe pouvant contenire ordre sommet
 Graphe* CreerGraphe(int ordre);
 //creation d'un nouveau graph
-Graphe * nouv_graphe(int ordre,int taille ,int **valeur);
+Graphe * nouv_graphe_pas_oriente(int ordre,int taille ,int **valeur);
+Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur);
 // Ajouter l'arête entre les sommets s1 et s2 du graphe
 pSommet* CreerArete(pSommet* sommet,int s1,int s2);
 // affichage des successeurs du sommet num
 void afficher_successeurs(pSommet * sommet, int num);
 //affichage du graphe avec les successeurs de chaque sommet
-void afficher_graph_exclusion(Graphe* graphe,int grand_sommet);
+void afficher_graph(Graphe* graphe,int grand_sommet);
 
 /////////////////////////Les fonciton de bases ////////////////////////
 
@@ -119,7 +120,7 @@ Graphe* CreerGraphe(int ordre)
     return Newgraphe;
 }
 //nouveau graph grace au tableau et au valeur recupere dans les fichier
-Graphe * nouv_graphe(int ordre,int taille ,int **valeur ) {
+Graphe * nouv_graphe_pas_oriente(int ordre,int taille ,int **valeur ) {
     Graphe *graphe;
 ///est ce que l'ordre doit etre le nombre de sommet different ou le sommet le plus elever ?
     graphe = CreerGraphe(ordre); // créer le graphe d'ordre sommets
@@ -135,8 +136,24 @@ Graphe * nouv_graphe(int ordre,int taille ,int **valeur ) {
     }
     return graphe;
 }
+//meme fonction sauf que on cree que 1 arrete au lieu de deux
+Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur ) {
+    Graphe *graphe;
+///est ce que l'ordre doit etre le nombre de sommet different ou le sommet le plus elever ?
+    graphe = CreerGraphe(ordre); // créer le graphe d'ordre sommets
+
+    //on initialise le graph a partir des donner extraites
+    graphe->ordre = ordre;
+    graphe->taille = taille;
+
+    // créer les arêtes du graphe depuis les valeurs du tableau
+    for (int i = 0; i < taille; i++) {
+        graphe->pSommet = CreerArete(graphe->pSommet, valeur[i][0],valeur[i][1]);
+    }
+    return graphe;
+}
 //affichage du graphe avec les successeurs de chaque sommet
-void afficher_graph_exclusion(Graphe* graphe,int grand_sommet)
+void afficher_graph(Graphe* graphe,int grand_sommet)
 {
     printf("graphe\n");
 
