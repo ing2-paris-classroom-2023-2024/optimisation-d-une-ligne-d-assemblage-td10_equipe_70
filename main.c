@@ -33,6 +33,8 @@ int main() {
 
         case 3 :
             printf("vous avez choisi exclusion + precedence \n");
+
+            exclusion_precedence_main();
             break;
 
         case 4 :

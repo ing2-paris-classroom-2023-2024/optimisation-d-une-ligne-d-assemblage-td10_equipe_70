@@ -320,11 +320,6 @@ int exclusion_main(){
 //on recupere le nombre de lignes et les valeur du fichier
 //cad on recupere le nombre de case du tableau valeur
     nb_lignes = lecture_fichier_exclusion(nomfichier,&valeur);
-    /*//test affichage
-    printf(" il y a %d ligne dans le fichier texte \n",nb_lignes);
-    for (int i = 0; i < nb_lignes; i++) {
-            printf(" ligne %d %d %d \n",i+1,valeur[i][0],valeur[i][1]);
-    }*/
 
 // on compte le nombre de valeur differentes dans le tableau valeur
     ordre = different_sommet(valeur,nb_lignes);

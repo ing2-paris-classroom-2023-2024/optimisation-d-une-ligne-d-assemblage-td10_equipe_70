@@ -84,9 +84,69 @@ int grand_sommet_precedence(int ** valeur, int lignes ){
 }
 //fonction principale ajouter dans le main pour simplifier les choses
 int exclusion_precedence_main(){
+    char *nomfichierprede = NULL;
+    char *nomfichierexclu = NULL;
+    int ** valeurprede = NULL ;
+    int ** valeurexclu = NULL ;
+    int nb_lignesprede;
+    int nb_lignesexclu;
+    int gr_sommetprede;
+    int gr_sommetexclu;
+    Graphe * graphe_prede;
+    Graphe * graphe_exclu;
+    size_t tailleMax = 100;  // Taille maximale du nom de fichier
+////la precedence //////////
+            // Allocation dynamique pour le nom de fichier
+            nomfichierprede = (char *)malloc(tailleMax * sizeof(char));
+            if (nomfichierprede == NULL) {
+                fprintf(stderr, "Erreur d'allocation mémoire.\n");
+                return 1;
+            }
+        //on recupere le nom du fichier
+            printf("Entrez le nom du fichier de precedence : \n");
+            scanf("%99s", nomfichierprede);
+            fflush(stdin);
+
+            nb_lignesprede = lecture_fichier_precedence(nomfichierprede,&valeurprede);
+            gr_sommetprede = grand_sommet_precedence(valeurprede,nb_lignesprede);
+//////////l'exclusion/////////////
+            // Allocation dynamique pour le nom de fichier
+    nomfichierexclu = (char *)malloc(tailleMax * sizeof(char));
+            if (nomfichierexclu == NULL) {
+                fprintf(stderr, "Erreur d'allocation mémoire.\n");
+                return 1;
+            }
+        //on recupere le nom du fichier
+            printf("Entrez le nom du fichier d'exclusion : \n");
+            scanf("%99s", nomfichierexclu);
+            fflush(stdin);
+
+            nb_lignesexclu = lecture_fichier_exclusion(nomfichierexclu,&valeurexclu);
+            gr_sommetexclu = grand_sommet(valeurexclu,nb_lignesexclu);
+
+
     //tout d'abord, cree le graph des precedence
-    //ensuite dans le graphe des precedence qui est un graph orienter
-    // on rajoute les couleur obtenue grace a l'exclusion
+
+    printf("____________________nous allons maintenant afficher le graphe de precedence____________________ \n");
+    graphe_prede = nouv_graphe_oriente(gr_sommetprede,nb_lignesprede,valeurprede);
+    afficher_graph(graphe_prede,gr_sommetprede);
+
+
+    //ensuite on fait la coloration sur le graph d'exclusion pour avoir les couleurs
+
+    printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
+    graphe_exclu = nouv_graphe_pas_oriente(gr_sommetexclu,nb_lignesexclu,valeurexclu);
+    afficher_graph(graphe_exclu,gr_sommetexclu);
+
+    printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
+     welsh_powell(graphe_exclu);
+    printf("_______________l'algorithme de welsh powell est terminer_______________\n");
+
+    // on rajoute les couleur obtenue grace a l'exclusion dans le graphe de precedence
+    //on par du principe que les deux graphe on le meme nombre de sommet
+    for (int i = 0; i < gr_sommetprede; i++) {
+        graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
+    }
 
     //on possede maintenant toutes les information dans un graphe, reste a trouver le moyen de les trier
     //pour les trier,
