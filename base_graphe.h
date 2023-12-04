@@ -40,6 +40,7 @@ typedef struct Graphe
     int ordre;
     pSommet* pSommet;//tableau de pointeur de sommet
 } Graphe;
+/*
 // File utilisée pour le BFS
 typedef struct File {
     int* tableau;
@@ -48,7 +49,7 @@ typedef struct File {
     int debut;
     int fin;
 } File;
-
+*/
 ///////////////////////////liste des fonctions de bases  ///////////////////////////////
 // créer le graphe pouvant contenire ordre sommet
 Graphe* CreerGraphe(int ordre);
@@ -63,7 +64,7 @@ void afficher_successeurs(pSommet * sommet, int num);
 void afficher_graph(Graphe* graphe,int grand_sommet);
 
 ///////////////////////liste des fonction de la file //////////////////////////:::
-
+/*
 // Fonction pour créer une file
 File* creerFile(int capacite);
 // Fonction pour vérifier si la file est vide
@@ -118,7 +119,63 @@ void libererFile(File* file) {
     free(file->tableau);
     free(file);
 }
+*/
+// Structure pour représenter un élément de la file
+typedef struct QueueNode
+{
+    int sommet;
+    struct QueueNode* suivant;
+} QueueNode;
 
+// Structure pour représenter une file
+typedef struct Queue
+{
+    QueueNode* debut;
+    QueueNode* fin;
+} Queue;
+
+// Fonction pour initialiser une file vide
+Queue* initQueue()
+{
+    Queue* file = (Queue*)malloc(sizeof(Queue));
+    file->debut = file->fin = NULL;
+    return file;
+}
+
+// Fonction pour ajouter un sommet à la file
+void enfiler(Queue* file, int sommet)
+{
+    QueueNode* nouveauSommet = (QueueNode*)malloc(sizeof(QueueNode));
+    nouveauSommet->sommet = sommet;
+    nouveauSommet->suivant = NULL;
+
+    if (file->fin == NULL)
+    {
+        file->debut = file->fin = nouveauSommet;
+        return;
+    }
+
+    file->fin->suivant = nouveauSommet;
+    file->fin = nouveauSommet;
+}
+
+// Fonction pour retirer un sommet de la file
+int defiler(Queue* file)
+{
+    if (file->debut == NULL)
+        return -1; // File vide
+
+    int sommet = file->debut->sommet;
+    QueueNode* temp = file->debut;
+
+    file->debut = file->debut->suivant;
+
+    if (file->debut == NULL)
+        file->fin = NULL;
+
+    free(temp);
+    return sommet;
+}
 
 /////////////////////////Les fonciton de bases ////////////////////////
 

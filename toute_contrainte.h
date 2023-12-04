@@ -135,23 +135,26 @@ int grand_sommet_temps(float ** valeur, int lignes ){
 float trouverValeurMaxPredecesseurs(Graphe * graphe,int i) {
 
     //on prend le numero de sommet du PREMIER predecesseur
-    int val = graphe->pSommet[i]->arc_entrant->sommet;
+    int val_actu = graphe->pSommet[i]->arc_entrant->sommet;
+    printf("on prend la valeur du premier sommmet \n");
     // Initialiser la valeur maximale avec la première valeur de prédécesseur
-    float valeurMax = graphe->pSommet[val]->valeur;
-
+    float valeurMax = graphe->pSommet[val_actu]->valeur;
+    printf(" on initialise avec sa valeur \n");
     // Parcourir la liste des prédécesseurs et mise à jour la valeur maximale si nécessaire
     pArc predecesseur = graphe->pSommet[i]->arc_entrant;
     while (predecesseur != NULL) {
         if (graphe->pSommet[predecesseur->sommet]->valeur > valeurMax) {
+            printf(" la valeur de %d est plus grande que %f \n",predecesseur->sommet,valeurMax);
             valeurMax = graphe->pSommet[predecesseur->sommet]->valeur;
         }
         predecesseur = predecesseur->arc_suivant;
     }
+    printf(" valeur max %d = %f\n", i ,valeurMax);
     return valeurMax;
 }
-
+/*
 // Algorithme de parcours en largeur (BFS)
-void BFS(Graphe* graphe, int depart,int ** temps) {
+void BFS(Graphe* graphe, int depart,float ** temps) {
 
 
     // Créer une file pour le BFS
@@ -160,6 +163,11 @@ void BFS(Graphe* graphe, int depart,int ** temps) {
     // Marquer le sommet de départ comme visité et l'enfiler
     graphe->pSommet[depart]->marque = 1;
     enfiler(file, depart);
+    
+    printf(" la file est remplie avec  :  \n");
+    for(int j =0; j< file->taille;j++){
+        printf(" case %d = %d \n", j , file -> tableau[j]);
+    }
 
     printf(" ordre de decouverte des sommet = \n\n");
     // tant que la file n'est pas vide
@@ -167,36 +175,84 @@ void BFS(Graphe* graphe, int depart,int ** temps) {
         // Défiler un sommet de la file et l'afficher
         int sommetCourant = defiler(file);
         float val ;
-        printf(" %d ", sommetCourant);
+        printf("le sommet defiler est  %d \n", sommetCourant);
 
         val = trouverValeurMaxPredecesseurs(graphe,sommetCourant);
         graphe->pSommet[sommetCourant]->valeur = temps[sommetCourant][1] + val;
+
         // Parcourir tous les successeurs du sommet actuel
         pArc arc_temp = graphe->pSommet[sommetCourant]->arc_sortant;
         printf(" on regarde les succeseur de %d\n",sommetCourant);
 
         while (arc_temp != NULL) {
-            printf(" dans la boucle de succeseur");
+            printf(" dans la boucle de succeseur\n");
             // Si le successeur n'a pas été visité, le marquer comme visité et l'enfiler
             if (graphe->pSommet[arc_temp->sommet]->marque == 0) {
-                printf(" le succeseur %d n'est pas encore decouvert ", arc_temp->sommet);
+                printf(" le succeseur %d n'est pas encore decouvert \n", arc_temp->sommet);
                 graphe->pSommet[arc_temp->sommet]->marque = 1;
                 enfiler(file, arc_temp->sommet);
+                printf(" la file est remplie avec  :  \n");
+                for(int j =0; j< file->taille;j++){
+                    printf(" case %d = %d ", j , file -> tableau[j]);
+                }
                 printf(" le succeseur %d est enfiler\n", arc_temp->sommet);
                 //le sommet est maintenant enfiler et visiter, avant de passer au suivant
                 }
 
-            printf("on va passer au suivant ");
-            //on passe au succeseur suivant
-            arc_temp = arc_temp->arc_suivant;
-            printf(" on passe au successeur %d ", arc_temp->sommet);
+            if(arc_temp->arc_suivant == NULL){
+                printf(" plus de succeseur \n");
+                arc_temp = NULL;
+            }
+            else {
+                arc_temp = arc_temp->arc_suivant;
+                printf(" on passe au successeur %d ", arc_temp->sommet);
+
+            }
         }
 
     // Libérer la mémoire allouée
     libererFile(file);
     }
 }
+*/
+// Fonction pour effectuer un parcours en largeur (BFS) sur le graphe
+void bfs(Graphe* graphe, int sommetDepart)
+{
+    // Initialiser la file et marquer tous les sommets comme non visités
+    Queue* file = initQueue();
+    int* visite = (int*)malloc((graphe->ordre + 1) * sizeof(int));
 
+    for (int i = 0; i <= graphe->ordre; i++)
+        visite[i] = 0;
+
+    // Ajouter le sommet de départ à la file et le marquer comme visité
+    enfiler(file, sommetDepart);
+    visite[sommetDepart] = 1;
+
+    // Parcours en largeur
+    while (file->debut != NULL)
+    {
+        // Retirer un sommet de la file et l'afficher
+        int sommetActuel = defiler(file);
+        printf("%d ", sommetActuel);
+
+        // Explorer les sommets adjacents non visités
+        pArc arc = graphe->pSommet[sommetActuel]->arc_sortant;
+        while (arc != NULL)
+        {
+            if (!visite[arc->sommet])
+            {
+                enfiler(file, arc->sommet);
+                visite[arc->sommet] = 1;
+            }
+            arc = arc->arc_suivant;
+        }
+    }
+
+    // Libérer la mémoire
+    free(visite);
+    free(file);
+}
 int toute_contraint(){
     char *nomfichierexclu = NULL;
     char *nomfichierprede = NULL;
@@ -339,7 +395,7 @@ int toute_contraint(){
 
     source = trouverSource(graphe_prede,temps);
 
-    BFS(graphe_prede,source);
+    bfs(graphe_prede,source);
 
     for (int i = 0; i <= gr_sommettemps; i++) {
         free(temps[i]);
