@@ -329,14 +329,20 @@ int stations(float ** tableau,int taille,float T ){
     return station - 2 ;
 }
 //affichage stations
-void affichage_station(float ** tabl,int taille ){
+void affichage_stat(float ** tabl,int taille,int station ){
 
 
-    printf(" nous avons trouver %d station :\n ");
-    printf(" station %d \n");
-    for (int i = 0; i <= taille; i++) {
-        printf(" %f\n ");
+    printf(" nous avons trouver %d station :\n\n ",station);
+    for (int i = 0; i < station; i++) {
+        printf(" STATION %d :\n",i+1);
+            for (int k = 0; k <= taille ; k++) {
+                if (tabl[(int)tabl[k][0]][3] == i + 2) {
+                    printf("sommet %d \n", (int)tabl[k][0]);
+                }
+
+        }
     }
+
 }
 
 int toute_contraint(){
@@ -567,9 +573,8 @@ int toute_contraint(){
     int stat = stations(tableau_de_trie,gr_sommetprede,T);
     printf(" il y a %d stations \n",stat);
     //on affiche les stations
-    affichage_station(tableau_de_trie,stat);
+    affichage_stat(tableau_de_trie,gr_sommetprede,stat);
 
-///refaire le programme de trie des station
 
     for (int i = 0; i <= gr_sommettemps; i++) {
         free(temps[i]);
