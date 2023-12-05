@@ -274,6 +274,8 @@ int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
     //on regarde les sommet 1 a 1, tout ceux qui ont la meme couleur seront afficher
     //dans la meme uniter
     printf(" les sommet suivant n'ont pas de contraint d'exclusion :\n ");
+    printf(" (on peut donc les ajouter a n'importe quel station ) \n ");
+
     for ( int i = 0; i < graphe->ordre; i++) {
         //on note les sommet sans contrainte
         if(graphe->pSommet[i]->couleur == 'n'){
