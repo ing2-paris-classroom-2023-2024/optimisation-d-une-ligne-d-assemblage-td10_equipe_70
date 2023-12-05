@@ -198,7 +198,7 @@ float** bfs(Graphe* graphe, int sommetDepart,float **tableau )
         //trouver la valeur max parmis les predecesseur et l'ajouter au sommet
         if(sommetActuel != sommetDepart) {
             float val = trouverValeurMaxPredecesseurs(graphe, sommetActuel);
-            //graphe->pSommet[sommetActuel]->valeur += val;
+            graphe->pSommet[sommetActuel]->valeur += val;
             //printf(" la valeur du sommet %d est mises a jouor avec %f\n",sommetActuel,val);
             tableau[sommetActuel][2] = graphe->pSommet[sommetActuel]->valeur+ val;
             //printf(" valeur sommet %d  = %f\n\n", sommetActuel, graphe->pSommet[sommetActuel]->valeur);
@@ -264,30 +264,37 @@ int stations(float ** tableau,int taille,float T ){
     // qu'a augmenter de 1
 
     while(restant == 1) {
+
         //on parcour tout le tableau
         for (int i = 0; i <= taille; i++) {
+            printf(" \nligne %d sommet %f",i,tableau[i][0]);
             //l'ajout d'un sommet a la station respecte le temps de cycle
             if (tableau[i][2] + tpstotal <= T) {
+                printf(" respecte le temps");
                 //sommet existe et pas encore placer
                 if (tableau[i][3] == 0) {
+                    printf(" il existe est n'est pas encore placer ");
                     //le sommet a la meme couleur ou est noir
                     if (tableau[i][1] == couleur || tableau[i][1] == noir) {
+
+                        printf(" il a la bonne couleur \n");
                             //on place le sommet dans la station
                             tableau[i][3] = station;
-                            printf(" sommet %d = station %f\n ", i,tableau[i][3]);
+                            printf(" sommet %f = station %f\n ", tableau[i][0],tableau[i][3]);
                             //on implement le temps total de la station
                             tpstotal += tableau[i][2];
                         }
                     }
                 }
-
+//////////////probleme avec les couleurs ///////////////////:
         }
         //on passe a la couleur suivante
-        char temp = (char)couleur ;
-        couleur = (float )(temp++) ;
+        couleur ++;
+        printf(" couleur suivante = %f",couleur);
         //on remet le temps total a 0
-        printf(" temps totatl station %d = %f ",station,tpstotal);
+        printf(" temps totatl station %d = %f \n\n",station,tpstotal);
         tpstotal = 0;
+
         //on regarde si il reste des sommet sans station
         restant = 0;
         for (int i = 0; i <= taille; i++) {
@@ -319,7 +326,7 @@ int stations(float ** tableau,int taille,float T ){
 
     // Retourner le tableau modifié
     Retourner tableau*/
-    return station - 1 ;
+    return station - 2 ;
 }
 //affichage stations
 void affichage_station(float ** tabl,int taille ){
@@ -528,19 +535,33 @@ int toute_contraint(){
     source = trouverSource(graphe_prede,temps);
 
     bfs(graphe_prede,source,tableau_de_trie);
-    //!!!!!!!ne pas oublier de modifier pour que les val soit uniquement dans le tableau et que les sommet
-    ///conserve leur valeur  de base
+
     triBulles(tableau_de_trie,gr_sommetprede);
+    //apres avoir trier le tableau en fonction de leur temps le plus tot, je remet les bonnes valeurs aux sommets
+    //on assigne les valeur de temps aux sommet
+    for (int i = 0; i <= gr_sommettemps; i++) {
+        graphe_prede->pSommet[i]->valeur = temps[i][1] ;
+        //printf(" sommet %d = %f \n ",i,graphe_prede->pSommet[i]->valeur);
+    }
+    //puis on remet les bonnes valeur dans le tableau mais sans changer l'ordre
+    for (int i = 0; i <= gr_sommetprede; i++) {
+        tableau_de_trie[i][2] = graphe_prede->pSommet[(int)tableau_de_trie[i][0]]->valeur;
+    }
 
 //affichage du tableau rempllie avec tout ce qu'il faut et trier en fonction du temps de cycle
     printf(" affichage du tableau de trie trier ");
     for (int i = 0; i <= gr_sommetprede; i++) {
-        printf("\n");
-        for (int j = 0; j < 4; j++) {
-            printf(" %f ",tableau_de_trie[i][j] );
+        printf("ligne %d : ",i);
+        printf("  sommet %f ",tableau_de_trie[i][0] );
+
+        for (int j = 1; j < 4; j++) {
+            printf("  %f ",tableau_de_trie[i][j] );
         }
+        printf("\n");
+
     }
     printf("\n");
+
 
     //on separe en station et recupere le nombre de station
     int stat = stations(tableau_de_trie,gr_sommetprede,T);
