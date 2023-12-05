@@ -82,6 +82,153 @@ int grand_sommet_precedence(int ** valeur, int lignes ){
     return grand_sommet;
 
 }
+//trouve la valeur max parmis les predecesseru
+float trouverValeurMaxPredecesseurs_prede(Graphe* graphe, int i) {
+    // Vérifier si le sommet a des prédécesseurs
+    if (graphe->pSommet[i]->arc_entrant == NULL) {
+        //printf("Le sommet %d n'a pas de prédécesseurs.\n", i);
+        return -1; // Une valeur spéciale pour indiquer une absence de prédécesseurs
+    }
+    //printf("on cherche les sommet de %d \n",i);
+    // Initialiser la valeur maximale avec la première valeur de prédécesseur
+    float valeurMax = 0;
+    //printf("valeur initialiser \n");
+    // Parcourir la liste des prédécesseurs et mise à jour la valeur maximale si nécessaire
+    pArc predecesseur = graphe->pSommet[i]->arc_entrant;
+    while (predecesseur != NULL) {
+        if (graphe->pSommet[predecesseur->sommet]->valeur > valeurMax) {
+            valeurMax = graphe->pSommet[predecesseur->sommet]->valeur;
+            //printf(" valeur max = %f du sommet %d \n",valeurMax,predecesseur->sommet);
+        }
+        if(predecesseur->arc_suivant == NULL){
+            // printf("tout prede explorer \n");
+            predecesseur = NULL;
+        }
+        else{
+            //printf(" on passa au prede suivant \n");
+            predecesseur = predecesseur->arc_suivant;
+        }
+
+    }
+    //printf(" on retourn %f\n",valeurMax);
+    return valeurMax;
+}
+//bsf plus simple
+float** bfs_simple(Graphe* graphe, int sommetDepart,float **tableau )
+{
+    // Initialiser la file et marquer tous les sommets comme non visités
+    Queue* file = initQueue();
+    int* visite = (int*)malloc((graphe->ordre + 1) * sizeof(int));
+
+    for (int i = 0; i <= graphe->ordre; i++)
+        visite[i] = 0;
+
+    // Ajouter le sommet de départ à la file et le marquer comme visité
+    enfiler(file, sommetDepart);
+    visite[sommetDepart] = 1;
+
+    // Parcours en largeur
+    while (file->debut != NULL)
+    {
+        // Retirer un sommet de la file et l'afficher
+        int sommetActuel = defiler(file);
+        printf(" %d \n",sommetActuel);
+        //printf(" on passe au sommet %d\n\n",sommetActuel);
+        //trouver la valeur max parmis les predecesseur et l'ajouter au sommet
+        if(sommetActuel != sommetDepart) {
+            float val = trouverValeurMaxPredecesseurs_prede(graphe, sommetActuel);
+            graphe->pSommet[sommetActuel]->valeur += val;
+            //printf(" la valeur du sommet %d est mises a jouor avec %f\n",sommetActuel,val);
+            tableau[sommetActuel][2] = graphe->pSommet[sommetActuel]->valeur;
+            //printf(" valeur sommet %d  = %f\n\n", sommetActuel, graphe->pSommet[sommetActuel]->valeur);
+        }
+        // Explorer les sommets adjacents non visités
+        pArc arc_temp = graphe->pSommet[sommetActuel]->arc_sortant;
+        //printf(" on selectionne les adjacents du sommet %d\n",sommetActuel);
+        while (arc_temp != NULL)
+        {
+            if (!visite[arc_temp->sommet])
+            {
+                //printf("le sommet %d est visiter\n ",arc_temp->sommet);
+                enfiler(file, arc_temp->sommet);
+                visite[arc_temp->sommet] = 1;
+            }
+            if(arc_temp->arc_suivant == NULL){
+                arc_temp = NULL;
+            }
+            else {
+                arc_temp = arc_temp->arc_suivant;
+            }
+        }
+    }
+    // Libérer la mémoire
+    free(visite);
+    free(file);
+    return tableau;
+}
+// changer pour trouver les sources
+int trouverSource_simple(Graphe* graphe,int ** valeur,int taille) {
+    // Tableau pour stocker le degré entrant de chaque sommet
+    int degreEntrant[graphe->ordre+1];
+    int existe[graphe->ordre+1] ;
+
+    // Initialiser tous les degrés entrants à zéro et dire que tout les sommet existe
+    for (int i = 0; i <= graphe->ordre; i++) {
+        degreEntrant[i] = 0;
+        existe[i] = 1;
+        printf(" %d %d ",degreEntrant[i],existe[i] );
+    }
+    //printf(" \nles deux tableau sont initialiser \n");
+
+    // Calculer les degrés entrants pour chaque sommet
+    for (int i = 0; i <= graphe->ordre; i++) {
+        int degrer = 0;
+        //printf(" sommet %d on selectionne les predecesseur %d\n",i,degrer);
+
+        pArc arc_temp = graphe->pSommet[i]->arc_entrant;
+
+        //printf("justea avant la boucle \n");
+        while (arc_temp != NULL) {
+            degrer++;
+            arc_temp = arc_temp->arc_suivant;
+        }
+        degreEntrant[i] = degrer;
+        printf(" sommet %d degre = %d \n",i,degrer);
+        //on verifie que les sommet existe pour chaque sommet on parcour tout le tableau
+        for (int k = 0; k < taille; k++) {
+            for (int j = 0; j < 2; ++j) {
+                if (valeur[k][j] == i) {
+                    existe[i] = 0;
+                    printf(" sommet %d existe bien \n", k);
+                }
+            }
+        }
+    }
+
+
+    // Trouver le sommet sans prédécesseur (degré entrant égal à zéro) qui existe
+    for (int i = 0; i <= graphe->ordre; i++) {
+        if (degreEntrant[i] == 0 && existe[i] == 0) {
+            printf(" \n source = %d\n", i);
+            return i;
+        }
+    }
+
+    // Si aucun sommet sans prédécesseur n'est trouvé, retourner -1
+    return -1;
+}
+// on separe en station
+int station(int ** tableau,int taille){
+    //on parcour tout le tableau
+    for (int i = 0; i <= taille; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            //si les sommet sont noir ou sont de la bonne couleur
+            //les ajouter a la station
+
+        }
+
+    }
+}
 //fonction principale ajouter dans le main pour simplifier les choses
 int exclusion_precedence_main(){
     char *nomfichierprede = NULL;
@@ -147,19 +294,46 @@ int exclusion_precedence_main(){
     for (int i = 0; i < gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
     }
-    //on possede maintenant toutes les information dans un graphe, reste a trouver le moyen de les trier
+    ///////////////////////on initialise le tableau de trie////////////////////////////////
+    float **tableau_de_trie = (float**)malloc((gr_sommetprede+1) * sizeof(float*));
+    for (int i = 0; i < gr_sommetprede+1; i++) {
+        tableau_de_trie[i] = (float*)malloc(4 *sizeof(float));
+    }
+//initialisation du tableau de trie
+    for (int i = 0; i <= gr_sommetprede; i++) {
+        for (int j = 0; j < 4; j++) {
+            tableau_de_trie[i][j] = 0;
+        }
+    }
+//on allou maintenant toutes les valeurs qu'on a dans le tableau pour trier
+    for (int i = 0; i <= gr_sommetprede; i++) {
+        //ligne sommet
+        tableau_de_trie[i][0] = i;
+        //ligne couleur
+        tableau_de_trie[i][1] = (float)graphe_prede->pSommet[i]->couleur;
+        //ligne temps de base
+        tableau_de_trie[i][2] = 1;
+        //ligne existe ?
+        tableau_de_trie[i][3] = 1;
 
-    //nous cherchons maintenant a faire PERT pour avoir un graphe de pert et savoir quel tache utiliser
-    //avant une autre en fonction de -son temps le plus tot
+    }
+    //on regarde qu'elle est la source du graphe de precedence.
+    int source = trouverSource_simple(graphe_prede,valeurprede,nb_lignesprede);
 
-    //pour cela nous devons trouver la source
-    //puis parcourir le graphe de precedence a partir de la source en faisant un bfs
 
-    //a chaque sommet faire temps precedent + temps du sommet
-    //on a donc l'odre pour le temps le plus tot
-    //a chaque sommet, le mettre soit dans un tableau soit dans une file
+    bfs_simple(graphe_prede,source,tableau_de_trie);
 
-    //faire un tableau avec la liste des sommet par precedence croissante (bfs)
+    printf(" affichage du tableau de trie trier ");
+    for (int i = 0; i <= gr_sommetprede; i++) {
+        printf("\n");
+        for (int j = 0; j < 4; j++) {
+            printf(" %f ",tableau_de_trie[i][j] );
+        }
+    }
+    printf("\n");
+
+
+
 
 // Libération de la mémoire pour le tableau valeurprede
     for (int i = 0; i < nb_lignesprede; i++) {

@@ -335,10 +335,6 @@ Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur ) {
 //affichage du graphe avec les successeurs de chaque sommet
 void afficher_graph(Graphe* graphe,int grand_sommet)
 {
-    printf("graphe\n");
-
-    printf("non oriente\n");
-
     printf("ordre = %d\n",graphe->ordre);
 
     printf("listes d'adjacence :\n");

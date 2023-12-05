@@ -198,9 +198,9 @@ float** bfs(Graphe* graphe, int sommetDepart,float **tableau )
         //trouver la valeur max parmis les predecesseur et l'ajouter au sommet
         if(sommetActuel != sommetDepart) {
             float val = trouverValeurMaxPredecesseurs(graphe, sommetActuel);
-            graphe->pSommet[sommetActuel]->valeur += val;
+            //graphe->pSommet[sommetActuel]->valeur += val;
             //printf(" la valeur du sommet %d est mises a jouor avec %f\n",sommetActuel,val);
-            tableau[sommetActuel][2] = graphe->pSommet[sommetActuel]->valeur;
+            tableau[sommetActuel][2] = graphe->pSommet[sommetActuel]->valeur+ val;
             //printf(" valeur sommet %d  = %f\n\n", sommetActuel, graphe->pSommet[sommetActuel]->valeur);
         }
         // Explorer les sommets adjacents non visités
@@ -468,16 +468,16 @@ int toute_contraint(){
     welsh_powell(graphe_exclu);
     // on rajoute les couleur obtenue grace a l'exclusion dans le graphe de precedence
     //on par du principe que les deux graphe on le meme nombre de sommet
-    printf(" voici les couleur des sommet \n");
+   // printf(" voici les couleur des sommet \n");
     for (int i = 0; i <= gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
-        printf(" sommet %d = %c \n ",i,graphe_exclu->pSommet[i]->couleur);
+        //printf(" sommet %d = %c \n ",i,graphe_exclu->pSommet[i]->couleur);
     }
     //on assigne les valeur de temps aux sommet
-    printf(" voici les valeur temp des sommet \n");
+    //printf(" voici les valeur temp des sommet \n");
     for (int i = 0; i <= gr_sommettemps; i++) {
             graphe_prede->pSommet[i]->valeur = temps[i][1] ;
-        printf(" sommet %d = %f \n ",i,graphe_prede->pSommet[i]->valeur);
+        //printf(" sommet %d = %f \n ",i,graphe_prede->pSommet[i]->valeur);
     }
 
     //regarder dans le tableau de operation, les valeur qui sont a O si 0 alors ca n'existe pas donc par consequent on
