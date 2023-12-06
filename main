@@ -1,0 +1,20 @@
+int main() {
+    // Exemple mais faudra utiliser bon fichier
+    Tache taches[] = {
+            {"MonterRoues", 3},
+            {"PoserCarrosserie", 5},
+            {"PlacerMoteur", 4},
+            {"PeindreCarrosserie", 2},
+            {"MonterVolant", 3},
+            {"Placerpedale",6}
+    };
+
+    int taille = sizeof(taches) / sizeof(taches[0]);
+
+    // Trie les tâches par ordre décroissant de durée
+    trierTaches(taches, taille);
+    // Attribue tâches aux stations en respectant contrainte de temps de cycle
+    attribuerStations(taches, taille);
+
+    return 0;
+}
