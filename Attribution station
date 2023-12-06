@@ -1,0 +1,16 @@
+void attribuerStations(Tache *taches, int taille) {
+    int station = 1;
+    int tempsStation = 0;
+
+    for (int i = 0; i < taille; i++) {
+        if (tempsStation + taches[i].duree <= T0) {
+            printf("Tache %s attribuee a la station %d\n", taches[i].nom, station);
+            tempsStation += taches[i].duree;
+        } else {
+            // Passe station suivante si contrainte de temps est dépassée
+            station++;
+            tempsStation = taches[i].duree;
+            printf("Tache %s attribuee a la station %d\n", taches[i].nom, station);
+        }
+    }
+}
