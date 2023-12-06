@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_TACHES 10
+#define TEMPS_CYCLE_MAX 3
+
+typedef struct {
+    int duree;
+    char nom[50];
+} Tache;
+
+Tache taches[MAX_TACHES] = {
+    {2, "Fabrication du châssis"},
+    {1, "Installation du moteur"},
+    {1, "Installation des roues"},
+    {2, "Installation du système électrique"},
+    {1, "Tests finaux"}
+};
+
+void repartirTaches() {
+    int tempsActuel = 0, station = 1;
+
+    printf("Répartition des tâches par station :\n");
+    for (int i = 0; i < MAX_TACHES; i++) {
+        if (taches[i].duree + tempsActuel > TEMPS_CYCLE_MAX) {
+            station++;
+            tempsActuel = 0;
+        }
+
+        printf("Station %d: %s\n", station, taches[i].nom);
+        tempsActuel += taches[i].duree;
+    }
+}
+
+int main() {
+    repartirTaches();
+    return 0;
+}
