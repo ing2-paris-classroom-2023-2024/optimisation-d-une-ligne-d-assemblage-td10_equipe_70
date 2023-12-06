@@ -1,0 +1,11 @@
+void calculerPERT() {
+    for (int i = 0; i < MAX_TACHES; i++) {
+        taches[i].debutAuPlusTot = 0;
+        for (int j = 0; j < taches[i].nbPrecedents; j++) {
+            int pred = taches[i].precedents[j];
+            int debutPossible = taches[pred].debutAuPlusTot + taches[pred].duree;
+            if (debutPossible > taches[i].debutAuPlusTot) {
+                taches[i].debutAuPlusTot = debutPossible;
+            }
+        }
+    }
