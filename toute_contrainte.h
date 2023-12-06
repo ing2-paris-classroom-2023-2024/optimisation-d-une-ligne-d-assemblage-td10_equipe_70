@@ -286,7 +286,6 @@ int stations(float ** tableau,int taille,float T ){
                         }
                     }
                 }
-//////////////probleme avec les couleurs ///////////////////:
         }
         //on passe a la couleur suivante
         couleur ++;
@@ -553,7 +552,7 @@ int toute_contraint(){
     for (int i = 0; i <= gr_sommetprede; i++) {
         tableau_de_trie[i][2] = graphe_prede->pSommet[(int)tableau_de_trie[i][0]]->valeur;
     }
-
+///////probleme dans ce qu'on touche dans le tableau , on inverse des valeur car les station ne sont pas les bonnes
 //affichage du tableau rempllie avec tout ce qu'il faut et trier en fonction du temps de cycle
     printf(" affichage du tableau de trie trier ");
     for (int i = 0; i <= gr_sommetprede; i++) {

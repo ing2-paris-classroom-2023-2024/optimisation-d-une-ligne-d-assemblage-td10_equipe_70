@@ -113,6 +113,29 @@ float trouverValeurMaxPredecesseurs_prede(Graphe* graphe, int i) {
     //printf(" on retourn %f\n",valeurMax);
     return valeurMax;
 }
+//trier les tableau
+void triBulles_simple(float **tableau, int taille) {
+    for (int i = 0; i < taille - 1; i++) {
+        for (int j = 0; j < taille - i - 1; j++) {
+            // Comparaison et échange si l'élément est plus grand que le suivant en fonction du temps on echange tout
+            if (tableau[j][2] > tableau[j + 1][2]) {
+                float temp = tableau[j][2];
+                float temp0 = tableau[j][0];
+                float temp1 = tableau[j][1];
+                float temp3 = tableau[j][3];
+                tableau[j][2] = tableau[j+1][2];
+                tableau[j][0] = tableau[j+1][0];
+                tableau[j][1] = tableau[j+1][1];
+                tableau[j][3] = tableau[j+1][3];
+
+                tableau[j+1][2] = temp;
+                tableau[j+1][0] = temp0;
+                tableau[j+1][1] = temp1;
+                tableau[j+1][3] = temp3;
+            }
+        }
+    }
+}
 //bsf plus simple
 float** bfs_simple(Graphe* graphe, int sommetDepart,float **tableau )
 {
@@ -218,16 +241,92 @@ int trouverSource_simple(Graphe* graphe,int ** valeur,int taille) {
     return -1;
 }
 // on separe en station
-int station(int ** tableau,int taille){
-    //on parcour tout le tableau
-    for (int i = 0; i <= taille; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            //si les sommet sont noir ou sont de la bonne couleur
-            //les ajouter a la station
+int station(float ** tableau,int taille){
+    //tant qu'il reste des sommet pas afficher
+    int station = 2;
+    float couleur = (float)'c';
+    float noir = 110;
+    int restant = 1;
+
+    //comme les couleur sont implementer de 1 en partant de C, on recupere la plus petite couleur et on n'aura
+    // qu'a augmenter de 1
+
+    while(restant == 1) {
+
+        //on parcour tout le tableau
+        for (int i = 0; i <= taille; i++) {
+
+            printf(" \nligne %d sommet %f",i,tableau[i][0]);
+                //sommet existe et pas encore placer
+                if (tableau[i][3] == 1) {
+                    printf(" il existe est n'est pas encore placer ");
+                    //le sommet a la meme couleur ou est noir
+                    if (tableau[i][1] == couleur || tableau[i][1] == noir) {
+
+                        printf(" il a la bonne couleur \n");
+                        //on place le sommet dans la station
+                        tableau[i][3] = station;
+                        printf(" sommet %f = station %f\n ", tableau[i][0],tableau[i][3]);
+                        //on implement le temps total de la station
+
+                }
+            }
+        }
+        //on passe a la couleur suivante
+        couleur ++;
+        printf(" couleur suivante = %f",couleur);
+
+        //on regarde si il reste des sommet sans station
+        restant = 0;
+        printf(" il reste :\n");
+        for (int i = 0; i <= taille; i++) {
+
+            if(tableau[i][3] == 1){
+                printf(" %f\n",tableau[i][0]);
+                restant = 1;
+            }
+        }
+        //on cahnge de station
+        station++;
+    }
+    /*taille = taille du tableau
+
+    stationActuelle = 1
+    sommeActuelle = 0
+
+    Pour chaque ligne dans le tableau:
+    Si la sommeActuelle + tableau[i][2] <= 30:
+    // Ajouter à la somme actuelle
+    sommeActuelle += tableau[i][2]
+    // Associer la station dans la troisième colonne
+    tableau[i][3] = stationActuelle
+    Sinon:
+    // Si la somme dépasse 30, passer à la station suivante
+    stationActuelle += 1
+    // Réinitialiser la somme actuelle à la valeur de la ligne actuelle
+    sommeActuelle = tableau[i][2]
+    // Associer la station dans la troisième colonne
+    tableau[i][3] = stationActuelle
+
+    // Retourner le tableau modifié
+    Retourner tableau*/
+    return station - 2 ;
+}
+//affichage stations
+void affichage_stat_simple(float ** tabl,int taille,int station ){
+
+
+    printf(" nous avons trouver %d station :\n\n ",station);
+    for (int i = 0; i < station; i++) {
+        printf(" STATION %d :\n",i+1);
+        for (int k = 0; k <= taille ; k++) {
+            if (tabl[(int)tabl[k][0]][3] == i + 2) {
+                printf("sommet %d \n", (int)tabl[k][0]);
+            }
 
         }
-
     }
+
 }
 //fonction principale ajouter dans le main pour simplifier les choses
 int exclusion_precedence_main(){
@@ -274,25 +373,26 @@ int exclusion_precedence_main(){
 
     //tout d'abord, cree le graph des precedence
 
-    printf("____________________nous allons maintenant afficher le graphe de precedence____________________ \n");
+    //printf("____________________nous allons maintenant afficher le graphe de precedence____________________ \n");
     graphe_prede = nouv_graphe_oriente(gr_sommetprede,nb_lignesprede,valeurprede);
-    afficher_graph(graphe_prede,gr_sommetprede);
+    //afficher_graph(graphe_prede,gr_sommetprede);
 
 
     //ensuite on fait la coloration sur le graph d'exclusion pour avoir les couleurs
 
-    printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
+    //printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
     graphe_exclu = nouv_graphe_pas_oriente(gr_sommetexclu,nb_lignesexclu,valeurexclu);
-    afficher_graph(graphe_exclu,gr_sommetexclu);
+    //afficher_graph(graphe_exclu,gr_sommetexclu);
 
-    printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
+    //printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
      welsh_powell(graphe_exclu);
-    printf("_______________l'algorithme de welsh powell est terminer_______________\n");
+    //printf("_______________l'algorithme de welsh powell est terminer_______________\n");
 
     // on rajoute les couleur obtenue grace a l'exclusion dans le graphe de precedence
     //on par du principe que les deux graphe on le meme nombre de sommet
-    for (int i = 0; i < gr_sommetprede; i++) {
+    for (int i = 0; i <= gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
+        printf(" sommet %d = couleur %c\n",i,graphe_prede->pSommet[i]->couleur);
     }
     ///////////////////////on initialise le tableau de trie////////////////////////////////
     float **tableau_de_trie = (float**)malloc((gr_sommetprede+1) * sizeof(float*));
@@ -322,6 +422,33 @@ int exclusion_precedence_main(){
 
 
     bfs_simple(graphe_prede,source,tableau_de_trie);
+    printf(" bfs finit \n");
+
+    triBulles_simple(tableau_de_trie,gr_sommetprede);
+    printf(" tri a bulle finit \n");
+
+    //on verifie si les sommet existe bien si non, on les met a 0
+    for (int i = 0; i <= gr_sommetprede; i++) {
+        int prede = 0;
+        int exclu = 0;
+        for (int j = 0; j < nb_lignesprede; j++) {
+            //si le sommet exite il est a 1
+            if (valeurprede[j][0] == tableau_de_trie[i][0] || valeurprede[j][1] == tableau_de_trie[i][0]) {
+                prede = 1;
+            }
+        }
+        for (int j = 0; j < nb_lignesexclu; j++) {
+            if (valeurexclu[j][0] == tableau_de_trie[i][0] || valeurexclu[j][1] == tableau_de_trie[i][0]) {
+                exclu = 1;
+            }
+        }
+            //si le sommet n'a pas ete mis a 1, il n'existe dans aucun des tableau
+            if(prede == 0 && exclu == 0){
+                tableau_de_trie[i][3] = 0;
+                printf(" le sommet %f existe pas \n",tableau_de_trie[i][0]);
+            }
+        }
+
 
     printf(" affichage du tableau de trie trier ");
     for (int i = 0; i <= gr_sommetprede; i++) {
@@ -332,8 +459,10 @@ int exclusion_precedence_main(){
     }
     printf("\n");
 
+    int stat = station(tableau_de_trie,gr_sommetprede);
+    printf(" nous avons trouver %d station ",stat);
 
-
+    affichage_stat_simple(tableau_de_trie,gr_sommetprede,stat);
 
 // Libération de la mémoire pour le tableau valeurprede
     for (int i = 0; i < nb_lignesprede; i++) {

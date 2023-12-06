@@ -351,6 +351,5 @@ int exclusion_main(){
     free(*valeur);
     free(nomfichier);
 
-    system("pause");
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H
