@@ -1,6 +1,7 @@
 #include "base_graphe.h"
 #include "exclusion.h"
 #include "temps + precedence.h"
+#include "exclusion + temps.h"
 #include "precedence + exclusion .h"
 #include "toute_contrainte.h"
 
@@ -44,7 +45,7 @@ int main() {
         case 4 :
             printf("vous avez choisi exclusion + temps de cycle\n");
 
-            printf(" desoler ce programme n'est pas encore disponible \n");
+            exclusion_temps_main();
             break;
 
         case 5 :

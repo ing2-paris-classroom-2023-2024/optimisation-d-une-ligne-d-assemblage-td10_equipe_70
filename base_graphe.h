@@ -138,6 +138,7 @@ void afficher_successeurs(pSommet * sommet, int num)
     }
 
 }
+// affichage des predecesseur du sommet num
 void afficher_predecesseur(pSommet * sommet, int num)
 {
 

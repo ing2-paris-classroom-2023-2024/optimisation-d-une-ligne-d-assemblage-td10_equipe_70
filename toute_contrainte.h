@@ -471,7 +471,8 @@ int toute_contraint(){
         //ligne existe ?
         if(tableau_de_trie[i][2]==0){
             tableau_de_trie[i][3] = 1;
-        }    }
+        }
+    }
     ////////////////////////////on commence a trier les valeur /////////////////////////////////////////////////////////
     source = trouverSource(graphe_prede,temps);
 
