@@ -294,6 +294,9 @@ int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
         }
     }
 }
+
+
+/// on test pour voir si ca se met bien sur la main
 //fonction rassemblant tout pour simplifier sont utilisation dans le menu
 //on peut conciderer ca somme le main exclusion
 int exclusion_main(){
@@ -348,6 +351,6 @@ int exclusion_main(){
     //on affiche les station en fonction des couleurs
     affichage_station_exclusion(graphe_exclu,nb_couleur);
 
-    system("pause");
+printf(" on test de la branch main vers exclusion ");
 }
 #endif //OPTI_LIGNE_ASSEMBLAGE_EXCLUSION_H
