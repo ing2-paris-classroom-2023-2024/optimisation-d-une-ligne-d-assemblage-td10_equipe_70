@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_TACHES 5
+
+typedef struct {
+    char nom[50];
+    bool exclusions[MAX_TACHES]; // Exclusions avec d'autres tâches
+} Tache;
+
+Tache taches[MAX_TACHES] = {
+    {"Fabrication du châssis", {false, false, false, false, false}},
+    {"Installation du moteur", {false, false, false, true, false}},
+    {"Installation des roues", {false, false, false, false, false}},
+    {"Installation du système électrique", {false, true, false, false, false}},
+    {"Tests finaux", {false, false, false, false, false}}
+};
+
+void afficherExclusions() {
+    printf("Contraintes d'exclusion entre les tâches :\n");
+    for (int i = 0; i < MAX_TACHES; i++) {
+        for (int j = 0; j < MAX_TACHES; j++) {
+            if (taches[i].exclusions[j]) {
+                printf("%s ne peut pas être effectuée avec %s\n", taches[i].nom, taches[j].nom);
+            }
+        }
+    }
+}
+
+int main() {
+    afficherExclusions();
+    return 0;
+}
