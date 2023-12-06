@@ -64,62 +64,6 @@ void afficher_successeurs(pSommet * sommet, int num);
 void afficher_graph(Graphe* graphe,int grand_sommet);
 
 ///////////////////////liste des fonction de la file //////////////////////////:::
-/*
-// Fonction pour créer une file
-File* creerFile(int capacite);
-// Fonction pour vérifier si la file est vide
-int estVide(File* file);
-// Fonction pour ajouter un élément à la file
-int enfiler(File* file, int element);
-// Fonction pour retirer un élément de la file
-int defiler(File* file);
-// Fonction pour libérer la mémoire de la file
-void libererFile(File* file);
-
-
-///////////////////////fonction de la file //////////////////////////:::
-// Fonction pour créer une file
-File* creerFile(int capacite) {
-    File* file = (File*)malloc(sizeof(File));
-    file->capacite = capacite;
-    file->taille = 0;
-    file->debut = 0;
-    file->fin = 0;
-    file->tableau = (int*)malloc((file->capacite+1) * sizeof(int));
-    return file;
-}
-// Fonction pour vérifier si la file est vide
-int estVide(File* file) {
-    return file->taille == 0;
-}
-// Fonction pour ajouter un élément à la file
-int enfiler(File* file, int element) {
-    if (file->taille == file->capacite) {
-        printf("Erreur : dépassement de la taille de la file.\n");
-        return -1;
-    }
-    file->tableau[file->fin] = element;
-    file->taille++;
-    file->fin++;
-
-}
-int defiler(File* file) {
-    if (file->taille == 0) {
-        printf("Erreur : file vide.\n");
-        return -1; // Ou tout autre valeur appropriée
-    }
-
-    int temp = file->tableau[file->debut];
-    file->debut++;
-    file->taille--;
-    return temp;
-}
-// Fonction pour libérer la mémoire de la file
-void libererFile(File* file) {
-    free(file->tableau);
-    free(file);
-}
-*/
 // Structure pour représenter un élément de la file
 typedef struct QueueNode
 {

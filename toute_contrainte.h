@@ -19,24 +19,19 @@ int trouverSource(Graphe* graphe,float ** valeur) {
     for (int i = 0; i <= graphe->ordre; i++) {
         degreEntrant[i] = 0;
         existe[i] = 0;
-        //printf(" %d %d ",degreEntrant[i],existe[i] );
     }
-    //printf(" \nles deux tableau sont initialiser \n");
 
     // Calculer les degrés entrants pour chaque sommet
     for (int i = 0; i <= graphe->ordre; i++) {
         int degrer = 0;
-         //printf(" sommet %d on selectionne les predecesseur %d\n",i,degrer);
-         
+
          pArc arc_temp = graphe->pSommet[i]->arc_entrant;
 
-         //printf("justea avant la boucle \n");
         while (arc_temp != NULL) {
             degrer++;
             arc_temp = arc_temp->arc_suivant;
         }
         degreEntrant[i] = degrer;
-        //printf(" sommet %d degre = %d \n",i,degrer);
     }
     for (int i = 0; i <= graphe->ordre; i++) {
         if(valeur[i][1] == 0.000000){
@@ -48,7 +43,7 @@ int trouverSource(Graphe* graphe,float ** valeur) {
     // Trouver le sommet sans prédécesseur (degré entrant égal à zéro) qui existe
     for (int i = 0; i <= graphe->ordre; i++) {
         if (degreEntrant[i] == 0 && existe[i] == 0) {
-            printf(" \n source = %d\n", i);
+            printf(" \n source = %d\n\n", i);
             return i;
         }
     }
@@ -102,11 +97,6 @@ int lecture_fichier_temps( char *nomfichier,float ***valeur){
 
     }
 
-    /*// Afficher les valeurs stockées dans le tableau
-    for (int i = 0; i < nombreDeLignes; i++) {
-        printf("Ligne %d : %f %f\n", i + 1, (*valeur)[i][0], (*valeur)[i][1]);
-    }
-*/
     fclose(fichier);
     return nombreDeLignes;
     //dans cette fonction on récupere les données sous la forme d'un tableau ainsi que
@@ -148,31 +138,24 @@ int grand_sommet_temps(float ** valeur, int lignes ){
 float trouverValeurMaxPredecesseurs(Graphe* graphe, int i) {
     // Vérifier si le sommet a des prédécesseurs
     if (graphe->pSommet[i]->arc_entrant == NULL) {
-        //printf("Le sommet %d n'a pas de prédécesseurs.\n", i);
         return -1; // Une valeur spéciale pour indiquer une absence de prédécesseurs
     }
-    //printf("on cherche les sommet de %d \n",i);
     // Initialiser la valeur maximale avec la première valeur de prédécesseur
     float valeurMax = 0;
-    //printf("valeur initialiser \n");
     // Parcourir la liste des prédécesseurs et mise à jour la valeur maximale si nécessaire
     pArc predecesseur = graphe->pSommet[i]->arc_entrant;
     while (predecesseur != NULL) {
         if (graphe->pSommet[predecesseur->sommet]->valeur > valeurMax) {
             valeurMax = graphe->pSommet[predecesseur->sommet]->valeur;
-            //printf(" valeur max = %f du sommet %d \n",valeurMax,predecesseur->sommet);
         }
         if(predecesseur->arc_suivant == NULL){
-           // printf("tout prede explorer \n");
             predecesseur = NULL;
         }
         else{
-            //printf(" on passa au prede suivant \n");
             predecesseur = predecesseur->arc_suivant;
         }
 
     }
-    //printf(" on retourn %f\n",valeurMax);
     return valeurMax;
 }
 // Fonction pour effectuer un parcours en largeur (BFS) sur le graphe
@@ -194,23 +177,18 @@ float** bfs(Graphe* graphe, int sommetDepart,float **tableau )
     {
         // Retirer un sommet de la file et l'afficher
         int sommetActuel = defiler(file);
-        //printf(" on passe au sommet %d\n\n",sommetActuel);
         //trouver la valeur max parmis les predecesseur et l'ajouter au sommet
         if(sommetActuel != sommetDepart) {
             float val = trouverValeurMaxPredecesseurs(graphe, sommetActuel);
             graphe->pSommet[sommetActuel]->valeur += val;
-            //printf(" la valeur du sommet %d est mises a jouor avec %f\n",sommetActuel,val);
             tableau[sommetActuel][2] = graphe->pSommet[sommetActuel]->valeur+ val;
-            //printf(" valeur sommet %d  = %f\n\n", sommetActuel, graphe->pSommet[sommetActuel]->valeur);
         }
         // Explorer les sommets adjacents non visités
         pArc arc_temp = graphe->pSommet[sommetActuel]->arc_sortant;
-        //printf(" on selectionne les adjacents du sommet %d\n",sommetActuel);
         while (arc_temp != NULL)
         {
             if (!visite[arc_temp->sommet])
             {
-                //printf("le sommet %d est visiter\n ",arc_temp->sommet);
                 enfiler(file, arc_temp->sommet);
                 visite[arc_temp->sommet] = 1;
             }
@@ -267,20 +245,15 @@ int stations(float ** tableau,int taille,float T ){
 
         //on parcour tout le tableau
         for (int i = 0; i <= taille; i++) {
-            printf(" \nligne %d sommet %f",i,tableau[i][0]);
             //l'ajout d'un sommet a la station respecte le temps de cycle
             if (tableau[i][2] + tpstotal <= T) {
-                printf(" respecte le temps");
                 //sommet existe et pas encore placer
                 if (tableau[i][3] == 0) {
-                    printf(" il existe est n'est pas encore placer ");
                     //le sommet a la meme couleur ou est noir
                     if (tableau[i][1] == couleur || tableau[i][1] == noir) {
 
-                        printf(" il a la bonne couleur \n");
                             //on place le sommet dans la station
                             tableau[i][3] = station;
-                            printf(" sommet %f = station %f\n ", tableau[i][0],tableau[i][3]);
                             //on implement le temps total de la station
                             tpstotal += tableau[i][2];
                         }
@@ -289,9 +262,7 @@ int stations(float ** tableau,int taille,float T ){
         }
         //on passe a la couleur suivante
         couleur ++;
-        printf(" couleur suivante = %f",couleur);
         //on remet le temps total a 0
-        printf(" temps totatl station %d = %f \n\n",station,tpstotal);
         tpstotal = 0;
 
         //on regarde si il reste des sommet sans station
@@ -304,27 +275,6 @@ int stations(float ** tableau,int taille,float T ){
         //on cahnge de station
         station++;
     }
-    /*taille = taille du tableau
-
-    stationActuelle = 1
-    sommeActuelle = 0
-
-    Pour chaque ligne dans le tableau:
-    Si la sommeActuelle + tableau[i][2] <= 30:
-    // Ajouter à la somme actuelle
-    sommeActuelle += tableau[i][2]
-    // Associer la station dans la troisième colonne
-    tableau[i][3] = stationActuelle
-    Sinon:
-    // Si la somme dépasse 30, passer à la station suivante
-    stationActuelle += 1
-    // Réinitialiser la somme actuelle à la valeur de la ligne actuelle
-    sommeActuelle = tableau[i][2]
-    // Associer la station dans la troisième colonne
-    tableau[i][3] = stationActuelle
-
-    // Retourner le tableau modifié
-    Retourner tableau*/
     return station - 2 ;
 }
 //affichage stations
@@ -466,7 +416,7 @@ int toute_contraint(){
     fflush(stdin);
 
     float T = lecture_fichier_cycle(nomfichiercycle);
-    printf("\n %f \n ",T);
+    printf("\ntemps de cycle = %f \n ",T);
 
     ///////////////////////////////////////////on organise les valeur recupere pour pouvoir trier en station //////////
     //on transvase les valeur dans un tableau ou chaque case represente un sommet, et on les a tous meme ceux qui
@@ -480,16 +430,12 @@ int toute_contraint(){
     welsh_powell(graphe_exclu);
     // on rajoute les couleur obtenue grace a l'exclusion dans le graphe de precedence
     //on par du principe que les deux graphe on le meme nombre de sommet
-   // printf(" voici les couleur des sommet \n");
     for (int i = 0; i <= gr_sommetprede; i++) {
         graphe_prede->pSommet[i]->couleur = graphe_exclu->pSommet[i]->couleur;
-        //printf(" sommet %d = %c \n ",i,graphe_exclu->pSommet[i]->couleur);
     }
     //on assigne les valeur de temps aux sommet
-    //printf(" voici les valeur temp des sommet \n");
     for (int i = 0; i <= gr_sommettemps; i++) {
             graphe_prede->pSommet[i]->valeur = temps[i][1] ;
-        //printf(" sommet %d = %f \n ",i,graphe_prede->pSommet[i]->valeur);
     }
 
     //regarder dans le tableau de operation, les valeur qui sont a O si 0 alors ca n'existe pas donc par consequent on
@@ -526,16 +472,6 @@ int toute_contraint(){
         if(tableau_de_trie[i][2]==0){
             tableau_de_trie[i][3] = 1;
         }    }
-/*/affichage du tableau
-    printf(" affichage du tableau de trie ");
-    for (int i = 0; i <= gr_sommetprede; i++) {
-        printf("\n");
-        for (int j = 0; j < 4; j++) {
-            printf(" %f ",tableau_de_trie[i][j] );
-        }
-        printf("\n");
-    }
-*/
     ////////////////////////////on commence a trier les valeur /////////////////////////////////////////////////////////
     source = trouverSource(graphe_prede,temps);
 
@@ -546,31 +482,13 @@ int toute_contraint(){
     //on assigne les valeur de temps aux sommet
     for (int i = 0; i <= gr_sommettemps; i++) {
         graphe_prede->pSommet[i]->valeur = temps[i][1] ;
-        //printf(" sommet %d = %f \n ",i,graphe_prede->pSommet[i]->valeur);
     }
     //puis on remet les bonnes valeur dans le tableau mais sans changer l'ordre
     for (int i = 0; i <= gr_sommetprede; i++) {
         tableau_de_trie[i][2] = graphe_prede->pSommet[(int)tableau_de_trie[i][0]]->valeur;
     }
-///////probleme dans ce qu'on touche dans le tableau , on inverse des valeur car les station ne sont pas les bonnes
-//affichage du tableau rempllie avec tout ce qu'il faut et trier en fonction du temps de cycle
-    printf(" affichage du tableau de trie trier ");
-    for (int i = 0; i <= gr_sommetprede; i++) {
-        printf("ligne %d : ",i);
-        printf("  sommet %f ",tableau_de_trie[i][0] );
-
-        for (int j = 1; j < 4; j++) {
-            printf("  %f ",tableau_de_trie[i][j] );
-        }
-        printf("\n");
-
-    }
-    printf("\n");
-
-
-    //on separe en station et recupere le nombre de station
+//on separe en station et recupere le nombre de station
     int stat = stations(tableau_de_trie,gr_sommetprede,T);
-    printf(" il y a %d stations \n",stat);
     //on affiche les stations
     affichage_stat(tableau_de_trie,gr_sommetprede,stat);
 

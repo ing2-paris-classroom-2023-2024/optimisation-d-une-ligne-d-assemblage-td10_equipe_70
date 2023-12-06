@@ -57,11 +57,6 @@ int lecture_fichier_exclusion( char *nomfichier,int ***valeur){
 
     }
 
-   /* // Afficher les valeurs stockées dans le tableau
-    for (int i = 0; i < nombreDeLignes; i++) {
-        printf("Ligne %d : %d %d\n", i + 1, (*valeur)[i][0], (*valeur)[i][1]);
-    }
-*/
     fclose(fichier);
     return nombreDeLignes;
     //dans cette fonction on récupere les données sous la forme d'un tableau ainsi que
@@ -97,11 +92,9 @@ int different_sommet(int **valeur, int lignes) {
         }
         compte += estDifferent;
     }
-    printf("il y a %d sommet differents\n\n",compte);
 
     return compte;
-    //possiblement une amelioration, avec une grand boucle for en fonction du nombre de lignes, ici on le fait 2
-    // fois mais on pourrati le faire N fois
+
 }
 //lecture dans les valeur pour avoie le plus grand sommet
 int grand_sommet(int ** valeur, int lignes ){
@@ -139,7 +132,6 @@ int welsh_powell(Graphe * graphe) {
         //degrer 1 = le degrer des sommet
         degre[i][1] = count;
     }
-    //printf("comptage des sommet\n");
     //trier les sommet par ordre decroissant en fonction de leur degrer
     for (int i = 0; i < graphe->ordre ; i++) {
         for (int j = 0; j < graphe->ordre - i ; j++) {
@@ -154,12 +146,6 @@ int welsh_powell(Graphe * graphe) {
             }
         }
     }
-    /*printf("triage des sommet dans le tableau \n");
-    //affichage test du tableau contenant les degrer avec leur sommet
-    printf(" ______Affichage test du tableau_____\n");
-    for (int i = 0; i < graphe->ordre+1; i++) {
-        printf("(%d, %d)\n ", degre[i][0], degre[i][1]);
-    }*/
 
     //attribuer les couleur en partant du debut du tableau et on donne dabord une couleur puis autre
     //on regarde la couleur du sommet si il est deja colorer ou pas
@@ -176,7 +162,6 @@ int welsh_powell(Graphe * graphe) {
         if (degre[j][1] == 0) {
             graphe->pSommet[degre[j][0]]->couleur = 'n';
         }}
-    //printf(" on colore tout les sommet qui sont isoler\n");
 
 
 
@@ -189,11 +174,9 @@ int welsh_powell(Graphe * graphe) {
             colorer[i] = 0;
             adj_colorer[i] = 0;
         }
-        //printf(" initialisation des tableau colorer et adj_colorer\n");
 
         //on augmente de un le nombre  couleur a chaque itération de la boucle
         nb_couleur++;
-        //printf("la couleur %c est la %d couleur \n",couleur, nb_couleur);
 
 //pour chaque couleur on regarde dans tout le tableau et on remplir les couleurs
 //dans les sommet qui remplissent les conditions
@@ -218,15 +201,12 @@ int welsh_powell(Graphe * graphe) {
             //si le sommet n'est pas colorer et qu'il n'a pas d'adjacents colorer
             //alors on le colore
             if (colorer[i] == 0 & adj_colorer[i] == 0) {
-                //printf("le sommet %d est maintenant colorer en %c\n", degre[i][0], couleur);
                 graphe->pSommet[degre[i][0]]->couleur = couleur;
             }
         }
             //////fin de la boucle on change les couleur /////
             //on change de couleur
-            //printf(" couleur %c devient ",couleur);
             couleur++;
-            //printf(" %c \n",couleur);
             //on dit qu'il ne reste plus de sommet a colorer( en sachant que cette condition est verifier apres
             //comme ca tant qu'il reste des sommet non colorer cette valeur ne va pas s'apliquer
             restant = 0;
@@ -333,14 +313,10 @@ int exclusion_main(){
     //le tableau alouer dynamiquement valeur est donc maintenant remplie des valeur des fichier texte.
     //il faut maintenant modeliser le graph d'exclusion a sovoir chaque couple représente une arrete non orienter
 
-    printf("____________________nous allons maintenant afficher le graphe d'exclusion____________________ \n");
     graphe_exclu = nouv_graphe_pas_oriente(gr_sommet,nb_lignes,valeur);
-    afficher_graph(graphe_exclu,gr_sommet);
 
     //on effectue l'algorithme de welsh powell, on attribut differentes couleur aux differents sommet;
-    printf("______________nous allons maintenant effectuer l'algo de welsh powell______________\n");
     nb_couleur = welsh_powell(graphe_exclu);
-    printf("_______________l'algorithme de welsh powell est terminer_______________\n");
 
     //on affiche les station en fonction des couleurs
     affichage_station_exclusion(graphe_exclu,nb_couleur);
