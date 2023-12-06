@@ -1,0 +1,6 @@
+#define T0 10  // Temps de cycle
+
+typedef struct {
+    char nom[50];
+    int duree;
+} Tache;
