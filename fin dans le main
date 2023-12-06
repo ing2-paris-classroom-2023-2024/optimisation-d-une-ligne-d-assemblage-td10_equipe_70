@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+
+#define T0 10  // Temps de cycle
+
+typedef struct {
+    char nom[50];
+    int duree;
+} Tache;
+
+void trierTaches(Tache *taches, int taille) {
+
+    for (int i = 0; i < taille - 1; i++) {
+        for (int j = 0; j < taille - i - 1; j++) {
+            if (taches[j].duree < taches[j + 1].duree) {
+                Tache temp = taches[j];
+                taches[j] = taches[j + 1];
+                taches[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void attribuerStations(Tache *taches, int taille) {
+    int station = 1;
+    int tempsStation = 0;
+
+    for (int i = 0; i < taille; i++) {
+        if (tempsStation + taches[i].duree <= T0) {
+            printf("Tache %s attribuee a la station %d\n", taches[i].nom, station);
+            tempsStation += taches[i].duree;
+        } else {
+            // Passe station suivante si contrainte de temps est dépassée
+            station++;
+            tempsStation = taches[i].duree;
+            printf("Tache %s attribuee a la station %d\n", taches[i].nom, station);
+        }
+    }
+}
+
+int main() {
+    // Exemple mais faudra utiliser bon fichier
+    Tache taches[] = {
+            {"MonterRoues", 3},
+            {"PoserCarrosserie", 5},
+            {"PlacerMoteur", 4},
+            {"PeindreCarrosserie", 2},
+            {"MonterVolant", 3},
+            {"Placerpedale",6}
+    };
+
+    int taille = sizeof(taches) / sizeof(taches[0]);
+
+    // Trie les tâches par ordre décroissant de durée
+    trierTaches(taches, taille);
+    // Attribue tâches aux stations en respectant contrainte de temps de cycle
+    attribuerStations(taches, taille);
+
+    return 0;
+}
