@@ -30,6 +30,8 @@ int main() {
 
         case 2 :
             printf("vous avez choisi precedence + temps de cycle \n");
+
+            printf(" desoler ce programme n'est pas encore disponible \n");
             break;
 
         case 3 :
@@ -40,6 +42,8 @@ int main() {
 
         case 4 :
             printf("vous avez choisi exclusion + temps de cycle\n");
+
+            printf(" desoler ce programme n'est pas encore disponible \n");
             break;
 
         case 5 :

@@ -439,7 +439,6 @@ int toute_contraint(){
     }
 
     //regarder dans le tableau de operation, les valeur qui sont a O si 0 alors ca n'existe pas donc par consequent on
-    // transmet ca dans trouver sources
 
     //maintenant, nous allons parcourir le graph de precedence pour assigner les valeur de prioriter des operation
     //cad on fait un pert modifier avec les temps les plus tot

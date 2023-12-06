@@ -244,7 +244,6 @@ Graphe* CreerGraphe(int ordre)
 //nouveau graph grace au tableau et au valeur recupere dans les fichier
 Graphe * nouv_graphe_pas_oriente(int ordre,int taille ,int **valeur ) {
     Graphe *graphe;
-///est ce que l'ordre doit etre le nombre de sommet different ou le sommet le plus elever ?
     graphe = CreerGraphe(ordre); // créer le graphe d'ordre sommets
 
     //on initialise le graph a partir des donner extraites
@@ -262,7 +261,6 @@ Graphe * nouv_graphe_pas_oriente(int ordre,int taille ,int **valeur ) {
 Graphe * nouv_graphe_oriente(int ordre,int taille ,int **valeur ) {
 
     Graphe *graphe;
-///est ce que l'ordre doit etre le nombre de sommet different ou le sommet le plus elever ?
     graphe = CreerGraphe(ordre); // créer le graphe d'ordre sommets
 
     //on initialise le graph a partir des donner extraites

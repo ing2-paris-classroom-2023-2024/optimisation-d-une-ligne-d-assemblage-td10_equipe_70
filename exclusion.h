@@ -278,7 +278,6 @@ int affichage_station_exclusion(Graphe * graphe, int nb_couleur){
 }
 
 
-/// on test pour voir si ca se met bien sur la main
 //fonction rassemblant tout pour simplifier sont utilisation dans le menu
 //on peut conciderer ca somme le main exclusion
 int exclusion_main(){

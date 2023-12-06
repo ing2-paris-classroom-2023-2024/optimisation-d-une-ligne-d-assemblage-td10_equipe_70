@@ -298,10 +298,12 @@ void affichage_stat_simple(float ** tabl,int taille,int station ){
 
 
     printf(" nous avons trouver %d station :\n\n ",station);
+
     for (int i = 0; i < station; i++) {
         printf(" STATION %d :\n",i+1);
+
         for (int k = 0; k <= taille ; k++) {
-            if (tabl[(int)tabl[k][0]][3] == i + 2) {
+            if (tabl[k][3] == i + 2) {
                 printf("sommet %d \n", (int)tabl[k][0]);
             }
 
@@ -419,15 +421,15 @@ int exclusion_precedence_main(){
         }
 
 
-  /*  printf(" affichage du tableau de trie trier ");
+   /*printf(" affichage du tableau de trie trier ");
     for (int i = 0; i <= gr_sommetprede; i++) {
         printf("\n");
         for (int j = 0; j < 4; j++) {
             printf(" %f ",tableau_de_trie[i][j] );
         }
     }
-    printf("\n");
-*/
+    printf("\n");*/
+
 
     int stat = station(tableau_de_trie,gr_sommetprede);
 
