@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TACHES 10
+
+// Structure pour représenter une tâche
+typedef struct {
+    int duree; // Durée de la tâche
+    int precedents[MAX_TACHES]; // Liste des indices des tâches précédentes
+    int nbPrecedents; // Nombre de tâches précédentes
+    int debutAuPlusTot; // Date de début au plus tôt
+    int finAuPlusTard; // Date de fin au plus tard
+} Tache;
+
+// Initialisation des tâches
+Tache taches[MAX_TACHES];
+
+// Fonction pour ajouter une tâche
+void ajouterTache(int indice, int duree, int precedents[], int nbPrecedents) {
+    taches[indice].duree = duree;
+    taches[indice].nbPrecedents = nbPrecedents;
+    for (int i = 0; i < nbPrecedents; i++) {
+        taches[indice].precedents[i] = precedents[i];
+    }
+    taches[indice].debutAuPlusTot = 0; // Initialisé à 0, sera calculé plus tard
+    taches[indice].finAuPlusTard = 0;  // Initialisé à 0, sera calculé plus tard
+}
+
+// Fonction pour calculer le début au plus tôt et la fin au plus tard pour chaque tâche
+void calculerPERT() {
+    // Calcul du début au plus tôt
+    for (int i = 0; i < MAX_TACHES; i++) {
+        for (int j = 0; j < taches[i].nbPrecedents; j++) {
+            int pred = taches[i].precedents[j];
+            int debutPossible = taches[pred].debutAuPlusTot + taches[pred].duree;
+            if (debutPossible > taches[i].debutAuPlusTot) {
+                taches[i].debutAuPlusTot = debutPossible;
+            }
+        }
+    }
+
+    // Calcul de la fin au plus tard
+    // (Ici, nous supposons que la dernière tâche définit la fin du projet)
+    int finProjet = taches[MAX_TACHES - 1].debutAuPlusTot + taches[MAX_TACHES - 1].duree;
+    for (int i = MAX_TACHES - 1; i >= 0; i--) {
+        if (taches[i].nbPrecedents == 0) { // Si pas de tâches suivantes
+            taches[i].finAuPlusTard = finProjet;
+        } else {
+            taches[i].finAuPlusTard = taches[i].debutAuPlusTot;
+            for (int j = 0; j < taches[i].nbPrecedents; j++) {
+                int suiv = taches[i].precedents[j];
+                int finPossible = taches[suiv].finAuPlusTard - taches[i].duree;
+                if (finPossible < taches[i].finAuPlusTard) {
+                    taches[i].finAuPlusTard = finPossible;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    // Exemple d'ajout de tâches
+    // ajouterTache(indice, duree, precedents[], nbPrecedents);
+    // ...
+
+    calculerPERT();
+
+    // Affichage des résultats
+    for (int i = 0; i < MAX_TACHES; i++) {
+        printf("Tâche %d: Début au plus tôt = %d, Fin au plus tard = %d\n",
+               i, taches[i].debutAuPlusTot, taches[i].finAuPlusTard);
+    }
+
+    return 0;
+}
